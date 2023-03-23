@@ -10,7 +10,7 @@
     #error Wrong include order: MAVLINK_COMMON.H MUST NOT BE DIRECTLY USED. Include mavlink.h from the same directory instead or set ALL AND EVERY defines from MAVLINK.H manually accordingly, including the #define MAVLINK_H call.
 #endif
 
-#define MAVLINK_COMMON_XML_HASH 750221831594726403
+#define MAVLINK_COMMON_XML_HASH -8932741131356819063
 
 #ifdef __cplusplus
 extern "C" {
@@ -2205,8 +2205,8 @@ typedef enum MAV_ODID_OPERATOR_ID_TYPE
 #define HAVE_ENUM_MAV_ODID_ARM_STATUS
 typedef enum MAV_ODID_ARM_STATUS
 {
-   MAV_ODID_ARM_STATUS_GOOD_TO_ARM=0, /* Passing arming checks. | */
-   MAV_ODID_ARM_STATUS_PRE_ARM_FAIL_GENERIC=1, /* Generic arming failure, see error string for details. | */
+   MAV_ODID_GOOD_TO_ARM=0, /* Passing arming checks. | */
+   MAV_ODID_PRE_ARM_FAIL_GENERIC=1, /* Generic arming failure, see error string for details. | */
    MAV_ODID_ARM_STATUS_ENUM_END=2, /*  | */
 } MAV_ODID_ARM_STATUS;
 #endif
