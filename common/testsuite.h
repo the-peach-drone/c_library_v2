@@ -484,7 +484,7 @@ static void mavlink_test_set_mode(uint8_t system_id, uint8_t component_id, mavli
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
     mavlink_set_mode_t packet_in = {
-        963497464,17,84,151,218,29,96,{ 163, 164 },{ 41, 42 }
+        963497464,17,84,151,218,29,96,{ 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178 }
     };
     mavlink_set_mode_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
@@ -496,8 +496,7 @@ static void mavlink_test_set_mode(uint8_t system_id, uint8_t component_id, mavli
         packet1.kcmvp_key = packet_in.kcmvp_key;
         packet1.kcmvp_key_index = packet_in.kcmvp_key_index;
         
-        mav_array_memcpy(packet1.ctr, packet_in.ctr, sizeof(uint8_t)*2);
-        mav_array_memcpy(packet1.iv, packet_in.iv, sizeof(uint8_t)*2);
+        mav_array_memcpy(packet1.kcmvp_iv, packet_in.kcmvp_iv, sizeof(uint8_t)*16);
         
 #ifdef MAVLINK_STATUS_FLAG_OUT_MAVLINK1
         if (status->flags & MAVLINK_STATUS_FLAG_OUT_MAVLINK1) {
@@ -511,12 +510,12 @@ static void mavlink_test_set_mode(uint8_t system_id, uint8_t component_id, mavli
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_set_mode_pack(system_id, component_id, &msg , packet1.target_system , packet1.base_mode , packet1.custom_mode , packet1.kcmvp_alg , packet1.kcmvp_mode , packet1.kcmvp_key , packet1.kcmvp_key_index , packet1.ctr , packet1.iv );
+    mavlink_msg_set_mode_pack(system_id, component_id, &msg , packet1.target_system , packet1.base_mode , packet1.custom_mode , packet1.kcmvp_alg , packet1.kcmvp_mode , packet1.kcmvp_key , packet1.kcmvp_key_index , packet1.kcmvp_iv );
     mavlink_msg_set_mode_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_set_mode_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.target_system , packet1.base_mode , packet1.custom_mode , packet1.kcmvp_alg , packet1.kcmvp_mode , packet1.kcmvp_key , packet1.kcmvp_key_index , packet1.ctr , packet1.iv );
+    mavlink_msg_set_mode_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.target_system , packet1.base_mode , packet1.custom_mode , packet1.kcmvp_alg , packet1.kcmvp_mode , packet1.kcmvp_key , packet1.kcmvp_key_index , packet1.kcmvp_iv );
     mavlink_msg_set_mode_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
@@ -529,7 +528,7 @@ static void mavlink_test_set_mode(uint8_t system_id, uint8_t component_id, mavli
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
         
         memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_set_mode_send(MAVLINK_COMM_1 , packet1.target_system , packet1.base_mode , packet1.custom_mode , packet1.kcmvp_alg , packet1.kcmvp_mode , packet1.kcmvp_key , packet1.kcmvp_key_index , packet1.ctr , packet1.iv );
+    mavlink_msg_set_mode_send(MAVLINK_COMM_1 , packet1.target_system , packet1.base_mode , packet1.custom_mode , packet1.kcmvp_alg , packet1.kcmvp_mode , packet1.kcmvp_key , packet1.kcmvp_key_index , packet1.kcmvp_iv );
     mavlink_msg_set_mode_decode(last_msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
@@ -1202,7 +1201,7 @@ static void mavlink_test_attitude(uint8_t system_id, uint8_t component_id, mavli
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
     mavlink_attitude_t packet_in = {
-        963497464,45.0,73.0,101.0,129.0,157.0,185.0,89,156,223,34,{ 101, 102 },{ 235, 236 }
+        963497464,45.0,73.0,101.0,129.0,157.0,185.0,89,156,223,34,{ 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116 }
     };
     mavlink_attitude_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
@@ -1218,8 +1217,7 @@ static void mavlink_test_attitude(uint8_t system_id, uint8_t component_id, mavli
         packet1.kcmvp_key = packet_in.kcmvp_key;
         packet1.kcmvp_key_index = packet_in.kcmvp_key_index;
         
-        mav_array_memcpy(packet1.ctr, packet_in.ctr, sizeof(uint8_t)*2);
-        mav_array_memcpy(packet1.iv, packet_in.iv, sizeof(uint8_t)*2);
+        mav_array_memcpy(packet1.kcmvp_iv, packet_in.kcmvp_iv, sizeof(uint8_t)*16);
         
 #ifdef MAVLINK_STATUS_FLAG_OUT_MAVLINK1
         if (status->flags & MAVLINK_STATUS_FLAG_OUT_MAVLINK1) {
@@ -1233,12 +1231,12 @@ static void mavlink_test_attitude(uint8_t system_id, uint8_t component_id, mavli
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_attitude_pack(system_id, component_id, &msg , packet1.time_boot_ms , packet1.roll , packet1.pitch , packet1.yaw , packet1.rollspeed , packet1.pitchspeed , packet1.yawspeed , packet1.kcmvp_alg , packet1.kcmvp_mode , packet1.kcmvp_key , packet1.kcmvp_key_index , packet1.ctr , packet1.iv );
+    mavlink_msg_attitude_pack(system_id, component_id, &msg , packet1.time_boot_ms , packet1.roll , packet1.pitch , packet1.yaw , packet1.rollspeed , packet1.pitchspeed , packet1.yawspeed , packet1.kcmvp_alg , packet1.kcmvp_mode , packet1.kcmvp_key , packet1.kcmvp_key_index , packet1.kcmvp_iv );
     mavlink_msg_attitude_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_attitude_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.time_boot_ms , packet1.roll , packet1.pitch , packet1.yaw , packet1.rollspeed , packet1.pitchspeed , packet1.yawspeed , packet1.kcmvp_alg , packet1.kcmvp_mode , packet1.kcmvp_key , packet1.kcmvp_key_index , packet1.ctr , packet1.iv );
+    mavlink_msg_attitude_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.time_boot_ms , packet1.roll , packet1.pitch , packet1.yaw , packet1.rollspeed , packet1.pitchspeed , packet1.yawspeed , packet1.kcmvp_alg , packet1.kcmvp_mode , packet1.kcmvp_key , packet1.kcmvp_key_index , packet1.kcmvp_iv );
     mavlink_msg_attitude_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
@@ -1251,7 +1249,7 @@ static void mavlink_test_attitude(uint8_t system_id, uint8_t component_id, mavli
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
         
         memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_attitude_send(MAVLINK_COMM_1 , packet1.time_boot_ms , packet1.roll , packet1.pitch , packet1.yaw , packet1.rollspeed , packet1.pitchspeed , packet1.yawspeed , packet1.kcmvp_alg , packet1.kcmvp_mode , packet1.kcmvp_key , packet1.kcmvp_key_index , packet1.ctr , packet1.iv );
+    mavlink_msg_attitude_send(MAVLINK_COMM_1 , packet1.time_boot_ms , packet1.roll , packet1.pitch , packet1.yaw , packet1.rollspeed , packet1.pitchspeed , packet1.yawspeed , packet1.kcmvp_alg , packet1.kcmvp_mode , packet1.kcmvp_key , packet1.kcmvp_key_index , packet1.kcmvp_iv );
     mavlink_msg_attitude_decode(last_msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 

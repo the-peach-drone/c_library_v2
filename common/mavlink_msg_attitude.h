@@ -16,26 +16,24 @@ typedef struct __mavlink_attitude_t {
  uint8_t kcmvp_mode; /*<  KCMVP Mode.*/
  uint8_t kcmvp_key; /*<  KCMVP Key.*/
  uint8_t kcmvp_key_index; /*<  KCMVP Key index.*/
- uint8_t ctr[2]; /*<  ctr used by ctr mode.*/
- uint8_t iv[2]; /*<  initial vector used by cbc mode.*/
+ uint8_t kcmvp_iv[16]; /*<  Initializer Vector*/
 } mavlink_attitude_t;
 
-#define MAVLINK_MSG_ID_ATTITUDE_LEN 36
+#define MAVLINK_MSG_ID_ATTITUDE_LEN 48
 #define MAVLINK_MSG_ID_ATTITUDE_MIN_LEN 28
-#define MAVLINK_MSG_ID_30_LEN 36
+#define MAVLINK_MSG_ID_30_LEN 48
 #define MAVLINK_MSG_ID_30_MIN_LEN 28
 
 #define MAVLINK_MSG_ID_ATTITUDE_CRC 39
 #define MAVLINK_MSG_ID_30_CRC 39
 
-#define MAVLINK_MSG_ATTITUDE_FIELD_CTR_LEN 2
-#define MAVLINK_MSG_ATTITUDE_FIELD_IV_LEN 2
+#define MAVLINK_MSG_ATTITUDE_FIELD_KCMVP_IV_LEN 16
 
 #if MAVLINK_COMMAND_24BIT
 #define MAVLINK_MESSAGE_INFO_ATTITUDE { \
     30, \
     "ATTITUDE", \
-    13, \
+    12, \
     {  { "time_boot_ms", NULL, MAVLINK_TYPE_UINT32_T, 0, 0, offsetof(mavlink_attitude_t, time_boot_ms) }, \
          { "roll", NULL, MAVLINK_TYPE_FLOAT, 0, 4, offsetof(mavlink_attitude_t, roll) }, \
          { "pitch", NULL, MAVLINK_TYPE_FLOAT, 0, 8, offsetof(mavlink_attitude_t, pitch) }, \
@@ -47,14 +45,13 @@ typedef struct __mavlink_attitude_t {
          { "kcmvp_mode", NULL, MAVLINK_TYPE_UINT8_T, 0, 29, offsetof(mavlink_attitude_t, kcmvp_mode) }, \
          { "kcmvp_key", NULL, MAVLINK_TYPE_UINT8_T, 0, 30, offsetof(mavlink_attitude_t, kcmvp_key) }, \
          { "kcmvp_key_index", NULL, MAVLINK_TYPE_UINT8_T, 0, 31, offsetof(mavlink_attitude_t, kcmvp_key_index) }, \
-         { "ctr", NULL, MAVLINK_TYPE_UINT8_T, 2, 32, offsetof(mavlink_attitude_t, ctr) }, \
-         { "iv", NULL, MAVLINK_TYPE_UINT8_T, 2, 34, offsetof(mavlink_attitude_t, iv) }, \
+         { "kcmvp_iv", NULL, MAVLINK_TYPE_UINT8_T, 16, 32, offsetof(mavlink_attitude_t, kcmvp_iv) }, \
          } \
 }
 #else
 #define MAVLINK_MESSAGE_INFO_ATTITUDE { \
     "ATTITUDE", \
-    13, \
+    12, \
     {  { "time_boot_ms", NULL, MAVLINK_TYPE_UINT32_T, 0, 0, offsetof(mavlink_attitude_t, time_boot_ms) }, \
          { "roll", NULL, MAVLINK_TYPE_FLOAT, 0, 4, offsetof(mavlink_attitude_t, roll) }, \
          { "pitch", NULL, MAVLINK_TYPE_FLOAT, 0, 8, offsetof(mavlink_attitude_t, pitch) }, \
@@ -66,8 +63,7 @@ typedef struct __mavlink_attitude_t {
          { "kcmvp_mode", NULL, MAVLINK_TYPE_UINT8_T, 0, 29, offsetof(mavlink_attitude_t, kcmvp_mode) }, \
          { "kcmvp_key", NULL, MAVLINK_TYPE_UINT8_T, 0, 30, offsetof(mavlink_attitude_t, kcmvp_key) }, \
          { "kcmvp_key_index", NULL, MAVLINK_TYPE_UINT8_T, 0, 31, offsetof(mavlink_attitude_t, kcmvp_key_index) }, \
-         { "ctr", NULL, MAVLINK_TYPE_UINT8_T, 2, 32, offsetof(mavlink_attitude_t, ctr) }, \
-         { "iv", NULL, MAVLINK_TYPE_UINT8_T, 2, 34, offsetof(mavlink_attitude_t, iv) }, \
+         { "kcmvp_iv", NULL, MAVLINK_TYPE_UINT8_T, 16, 32, offsetof(mavlink_attitude_t, kcmvp_iv) }, \
          } \
 }
 #endif
@@ -89,12 +85,11 @@ typedef struct __mavlink_attitude_t {
  * @param kcmvp_mode  KCMVP Mode.
  * @param kcmvp_key  KCMVP Key.
  * @param kcmvp_key_index  KCMVP Key index.
- * @param ctr  ctr used by ctr mode.
- * @param iv  initial vector used by cbc mode.
+ * @param kcmvp_iv  Initializer Vector
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_attitude_pack(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg,
-                               uint32_t time_boot_ms, float roll, float pitch, float yaw, float rollspeed, float pitchspeed, float yawspeed, uint8_t kcmvp_alg, uint8_t kcmvp_mode, uint8_t kcmvp_key, uint8_t kcmvp_key_index, const uint8_t *ctr, const uint8_t *iv)
+                               uint32_t time_boot_ms, float roll, float pitch, float yaw, float rollspeed, float pitchspeed, float yawspeed, uint8_t kcmvp_alg, uint8_t kcmvp_mode, uint8_t kcmvp_key, uint8_t kcmvp_key_index, const uint8_t *kcmvp_iv)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
     char buf[MAVLINK_MSG_ID_ATTITUDE_LEN];
@@ -109,8 +104,7 @@ static inline uint16_t mavlink_msg_attitude_pack(uint8_t system_id, uint8_t comp
     _mav_put_uint8_t(buf, 29, kcmvp_mode);
     _mav_put_uint8_t(buf, 30, kcmvp_key);
     _mav_put_uint8_t(buf, 31, kcmvp_key_index);
-    _mav_put_uint8_t_array(buf, 32, ctr, 2);
-    _mav_put_uint8_t_array(buf, 34, iv, 2);
+    _mav_put_uint8_t_array(buf, 32, kcmvp_iv, 16);
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_ATTITUDE_LEN);
 #else
     mavlink_attitude_t packet;
@@ -125,8 +119,7 @@ static inline uint16_t mavlink_msg_attitude_pack(uint8_t system_id, uint8_t comp
     packet.kcmvp_mode = kcmvp_mode;
     packet.kcmvp_key = kcmvp_key;
     packet.kcmvp_key_index = kcmvp_key_index;
-    mav_array_memcpy(packet.ctr, ctr, sizeof(uint8_t)*2);
-    mav_array_memcpy(packet.iv, iv, sizeof(uint8_t)*2);
+    mav_array_memcpy(packet.kcmvp_iv, kcmvp_iv, sizeof(uint8_t)*16);
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, MAVLINK_MSG_ID_ATTITUDE_LEN);
 #endif
 
@@ -151,13 +144,12 @@ static inline uint16_t mavlink_msg_attitude_pack(uint8_t system_id, uint8_t comp
  * @param kcmvp_mode  KCMVP Mode.
  * @param kcmvp_key  KCMVP Key.
  * @param kcmvp_key_index  KCMVP Key index.
- * @param ctr  ctr used by ctr mode.
- * @param iv  initial vector used by cbc mode.
+ * @param kcmvp_iv  Initializer Vector
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_attitude_pack_chan(uint8_t system_id, uint8_t component_id, uint8_t chan,
                                mavlink_message_t* msg,
-                                   uint32_t time_boot_ms,float roll,float pitch,float yaw,float rollspeed,float pitchspeed,float yawspeed,uint8_t kcmvp_alg,uint8_t kcmvp_mode,uint8_t kcmvp_key,uint8_t kcmvp_key_index,const uint8_t *ctr,const uint8_t *iv)
+                                   uint32_t time_boot_ms,float roll,float pitch,float yaw,float rollspeed,float pitchspeed,float yawspeed,uint8_t kcmvp_alg,uint8_t kcmvp_mode,uint8_t kcmvp_key,uint8_t kcmvp_key_index,const uint8_t *kcmvp_iv)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
     char buf[MAVLINK_MSG_ID_ATTITUDE_LEN];
@@ -172,8 +164,7 @@ static inline uint16_t mavlink_msg_attitude_pack_chan(uint8_t system_id, uint8_t
     _mav_put_uint8_t(buf, 29, kcmvp_mode);
     _mav_put_uint8_t(buf, 30, kcmvp_key);
     _mav_put_uint8_t(buf, 31, kcmvp_key_index);
-    _mav_put_uint8_t_array(buf, 32, ctr, 2);
-    _mav_put_uint8_t_array(buf, 34, iv, 2);
+    _mav_put_uint8_t_array(buf, 32, kcmvp_iv, 16);
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_ATTITUDE_LEN);
 #else
     mavlink_attitude_t packet;
@@ -188,8 +179,7 @@ static inline uint16_t mavlink_msg_attitude_pack_chan(uint8_t system_id, uint8_t
     packet.kcmvp_mode = kcmvp_mode;
     packet.kcmvp_key = kcmvp_key;
     packet.kcmvp_key_index = kcmvp_key_index;
-    mav_array_memcpy(packet.ctr, ctr, sizeof(uint8_t)*2);
-    mav_array_memcpy(packet.iv, iv, sizeof(uint8_t)*2);
+    mav_array_memcpy(packet.kcmvp_iv, kcmvp_iv, sizeof(uint8_t)*16);
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, MAVLINK_MSG_ID_ATTITUDE_LEN);
 #endif
 
@@ -207,7 +197,7 @@ static inline uint16_t mavlink_msg_attitude_pack_chan(uint8_t system_id, uint8_t
  */
 static inline uint16_t mavlink_msg_attitude_encode(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg, const mavlink_attitude_t* attitude)
 {
-    return mavlink_msg_attitude_pack(system_id, component_id, msg, attitude->time_boot_ms, attitude->roll, attitude->pitch, attitude->yaw, attitude->rollspeed, attitude->pitchspeed, attitude->yawspeed, attitude->kcmvp_alg, attitude->kcmvp_mode, attitude->kcmvp_key, attitude->kcmvp_key_index, attitude->ctr, attitude->iv);
+    return mavlink_msg_attitude_pack(system_id, component_id, msg, attitude->time_boot_ms, attitude->roll, attitude->pitch, attitude->yaw, attitude->rollspeed, attitude->pitchspeed, attitude->yawspeed, attitude->kcmvp_alg, attitude->kcmvp_mode, attitude->kcmvp_key, attitude->kcmvp_key_index, attitude->kcmvp_iv);
 }
 
 /**
@@ -221,7 +211,7 @@ static inline uint16_t mavlink_msg_attitude_encode(uint8_t system_id, uint8_t co
  */
 static inline uint16_t mavlink_msg_attitude_encode_chan(uint8_t system_id, uint8_t component_id, uint8_t chan, mavlink_message_t* msg, const mavlink_attitude_t* attitude)
 {
-    return mavlink_msg_attitude_pack_chan(system_id, component_id, chan, msg, attitude->time_boot_ms, attitude->roll, attitude->pitch, attitude->yaw, attitude->rollspeed, attitude->pitchspeed, attitude->yawspeed, attitude->kcmvp_alg, attitude->kcmvp_mode, attitude->kcmvp_key, attitude->kcmvp_key_index, attitude->ctr, attitude->iv);
+    return mavlink_msg_attitude_pack_chan(system_id, component_id, chan, msg, attitude->time_boot_ms, attitude->roll, attitude->pitch, attitude->yaw, attitude->rollspeed, attitude->pitchspeed, attitude->yawspeed, attitude->kcmvp_alg, attitude->kcmvp_mode, attitude->kcmvp_key, attitude->kcmvp_key_index, attitude->kcmvp_iv);
 }
 
 /**
@@ -239,12 +229,11 @@ static inline uint16_t mavlink_msg_attitude_encode_chan(uint8_t system_id, uint8
  * @param kcmvp_mode  KCMVP Mode.
  * @param kcmvp_key  KCMVP Key.
  * @param kcmvp_key_index  KCMVP Key index.
- * @param ctr  ctr used by ctr mode.
- * @param iv  initial vector used by cbc mode.
+ * @param kcmvp_iv  Initializer Vector
  */
 #ifdef MAVLINK_USE_CONVENIENCE_FUNCTIONS
 
-static inline void mavlink_msg_attitude_send(mavlink_channel_t chan, uint32_t time_boot_ms, float roll, float pitch, float yaw, float rollspeed, float pitchspeed, float yawspeed, uint8_t kcmvp_alg, uint8_t kcmvp_mode, uint8_t kcmvp_key, uint8_t kcmvp_key_index, const uint8_t *ctr, const uint8_t *iv)
+static inline void mavlink_msg_attitude_send(mavlink_channel_t chan, uint32_t time_boot_ms, float roll, float pitch, float yaw, float rollspeed, float pitchspeed, float yawspeed, uint8_t kcmvp_alg, uint8_t kcmvp_mode, uint8_t kcmvp_key, uint8_t kcmvp_key_index, const uint8_t *kcmvp_iv)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
     char buf[MAVLINK_MSG_ID_ATTITUDE_LEN];
@@ -259,8 +248,7 @@ static inline void mavlink_msg_attitude_send(mavlink_channel_t chan, uint32_t ti
     _mav_put_uint8_t(buf, 29, kcmvp_mode);
     _mav_put_uint8_t(buf, 30, kcmvp_key);
     _mav_put_uint8_t(buf, 31, kcmvp_key_index);
-    _mav_put_uint8_t_array(buf, 32, ctr, 2);
-    _mav_put_uint8_t_array(buf, 34, iv, 2);
+    _mav_put_uint8_t_array(buf, 32, kcmvp_iv, 16);
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_ATTITUDE, buf, MAVLINK_MSG_ID_ATTITUDE_MIN_LEN, MAVLINK_MSG_ID_ATTITUDE_LEN, MAVLINK_MSG_ID_ATTITUDE_CRC);
 #else
     mavlink_attitude_t packet;
@@ -275,8 +263,7 @@ static inline void mavlink_msg_attitude_send(mavlink_channel_t chan, uint32_t ti
     packet.kcmvp_mode = kcmvp_mode;
     packet.kcmvp_key = kcmvp_key;
     packet.kcmvp_key_index = kcmvp_key_index;
-    mav_array_memcpy(packet.ctr, ctr, sizeof(uint8_t)*2);
-    mav_array_memcpy(packet.iv, iv, sizeof(uint8_t)*2);
+    mav_array_memcpy(packet.kcmvp_iv, kcmvp_iv, sizeof(uint8_t)*16);
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_ATTITUDE, (const char *)&packet, MAVLINK_MSG_ID_ATTITUDE_MIN_LEN, MAVLINK_MSG_ID_ATTITUDE_LEN, MAVLINK_MSG_ID_ATTITUDE_CRC);
 #endif
 }
@@ -289,7 +276,7 @@ static inline void mavlink_msg_attitude_send(mavlink_channel_t chan, uint32_t ti
 static inline void mavlink_msg_attitude_send_struct(mavlink_channel_t chan, const mavlink_attitude_t* attitude)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
-    mavlink_msg_attitude_send(chan, attitude->time_boot_ms, attitude->roll, attitude->pitch, attitude->yaw, attitude->rollspeed, attitude->pitchspeed, attitude->yawspeed, attitude->kcmvp_alg, attitude->kcmvp_mode, attitude->kcmvp_key, attitude->kcmvp_key_index, attitude->ctr, attitude->iv);
+    mavlink_msg_attitude_send(chan, attitude->time_boot_ms, attitude->roll, attitude->pitch, attitude->yaw, attitude->rollspeed, attitude->pitchspeed, attitude->yawspeed, attitude->kcmvp_alg, attitude->kcmvp_mode, attitude->kcmvp_key, attitude->kcmvp_key_index, attitude->kcmvp_iv);
 #else
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_ATTITUDE, (const char *)attitude, MAVLINK_MSG_ID_ATTITUDE_MIN_LEN, MAVLINK_MSG_ID_ATTITUDE_LEN, MAVLINK_MSG_ID_ATTITUDE_CRC);
 #endif
@@ -303,7 +290,7 @@ static inline void mavlink_msg_attitude_send_struct(mavlink_channel_t chan, cons
   is usually the receive buffer for the channel, and allows a reply to an
   incoming message with minimum stack space usage.
  */
-static inline void mavlink_msg_attitude_send_buf(mavlink_message_t *msgbuf, mavlink_channel_t chan,  uint32_t time_boot_ms, float roll, float pitch, float yaw, float rollspeed, float pitchspeed, float yawspeed, uint8_t kcmvp_alg, uint8_t kcmvp_mode, uint8_t kcmvp_key, uint8_t kcmvp_key_index, const uint8_t *ctr, const uint8_t *iv)
+static inline void mavlink_msg_attitude_send_buf(mavlink_message_t *msgbuf, mavlink_channel_t chan,  uint32_t time_boot_ms, float roll, float pitch, float yaw, float rollspeed, float pitchspeed, float yawspeed, uint8_t kcmvp_alg, uint8_t kcmvp_mode, uint8_t kcmvp_key, uint8_t kcmvp_key_index, const uint8_t *kcmvp_iv)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
     char *buf = (char *)msgbuf;
@@ -318,8 +305,7 @@ static inline void mavlink_msg_attitude_send_buf(mavlink_message_t *msgbuf, mavl
     _mav_put_uint8_t(buf, 29, kcmvp_mode);
     _mav_put_uint8_t(buf, 30, kcmvp_key);
     _mav_put_uint8_t(buf, 31, kcmvp_key_index);
-    _mav_put_uint8_t_array(buf, 32, ctr, 2);
-    _mav_put_uint8_t_array(buf, 34, iv, 2);
+    _mav_put_uint8_t_array(buf, 32, kcmvp_iv, 16);
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_ATTITUDE, buf, MAVLINK_MSG_ID_ATTITUDE_MIN_LEN, MAVLINK_MSG_ID_ATTITUDE_LEN, MAVLINK_MSG_ID_ATTITUDE_CRC);
 #else
     mavlink_attitude_t *packet = (mavlink_attitude_t *)msgbuf;
@@ -334,8 +320,7 @@ static inline void mavlink_msg_attitude_send_buf(mavlink_message_t *msgbuf, mavl
     packet->kcmvp_mode = kcmvp_mode;
     packet->kcmvp_key = kcmvp_key;
     packet->kcmvp_key_index = kcmvp_key_index;
-    mav_array_memcpy(packet->ctr, ctr, sizeof(uint8_t)*2);
-    mav_array_memcpy(packet->iv, iv, sizeof(uint8_t)*2);
+    mav_array_memcpy(packet->kcmvp_iv, kcmvp_iv, sizeof(uint8_t)*16);
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_ATTITUDE, (const char *)packet, MAVLINK_MSG_ID_ATTITUDE_MIN_LEN, MAVLINK_MSG_ID_ATTITUDE_LEN, MAVLINK_MSG_ID_ATTITUDE_CRC);
 #endif
 }
@@ -457,23 +442,13 @@ static inline uint8_t mavlink_msg_attitude_get_kcmvp_key_index(const mavlink_mes
 }
 
 /**
- * @brief Get field ctr from attitude message
+ * @brief Get field kcmvp_iv from attitude message
  *
- * @return  ctr used by ctr mode.
+ * @return  Initializer Vector
  */
-static inline uint16_t mavlink_msg_attitude_get_ctr(const mavlink_message_t* msg, uint8_t *ctr)
+static inline uint16_t mavlink_msg_attitude_get_kcmvp_iv(const mavlink_message_t* msg, uint8_t *kcmvp_iv)
 {
-    return _MAV_RETURN_uint8_t_array(msg, ctr, 2,  32);
-}
-
-/**
- * @brief Get field iv from attitude message
- *
- * @return  initial vector used by cbc mode.
- */
-static inline uint16_t mavlink_msg_attitude_get_iv(const mavlink_message_t* msg, uint8_t *iv)
-{
-    return _MAV_RETURN_uint8_t_array(msg, iv, 2,  34);
+    return _MAV_RETURN_uint8_t_array(msg, kcmvp_iv, 16,  32);
 }
 
 /**
@@ -496,8 +471,7 @@ static inline void mavlink_msg_attitude_decode(const mavlink_message_t* msg, mav
     attitude->kcmvp_mode = mavlink_msg_attitude_get_kcmvp_mode(msg);
     attitude->kcmvp_key = mavlink_msg_attitude_get_kcmvp_key(msg);
     attitude->kcmvp_key_index = mavlink_msg_attitude_get_kcmvp_key_index(msg);
-    mavlink_msg_attitude_get_ctr(msg, attitude->ctr);
-    mavlink_msg_attitude_get_iv(msg, attitude->iv);
+    mavlink_msg_attitude_get_kcmvp_iv(msg, attitude->kcmvp_iv);
 #else
         uint8_t len = msg->len < MAVLINK_MSG_ID_ATTITUDE_LEN? msg->len : MAVLINK_MSG_ID_ATTITUDE_LEN;
         memset(attitude, 0, MAVLINK_MSG_ID_ATTITUDE_LEN);
