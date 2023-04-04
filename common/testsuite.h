@@ -1271,7 +1271,7 @@ static void mavlink_test_attitude_quaternion(uint8_t system_id, uint8_t componen
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
     mavlink_attitude_quaternion_t packet_in = {
-        963497464,45.0,73.0,101.0,129.0,157.0,185.0,213.0,{ 241.0, 242.0, 243.0, 244.0 }
+        963497464,45.0,73.0,101.0,129.0,157.0,185.0,213.0,{ 241.0, 242.0, 243.0, 244.0 },149,216,27,94,{ 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176 }
     };
     mavlink_attitude_quaternion_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
@@ -1283,8 +1283,13 @@ static void mavlink_test_attitude_quaternion(uint8_t system_id, uint8_t componen
         packet1.rollspeed = packet_in.rollspeed;
         packet1.pitchspeed = packet_in.pitchspeed;
         packet1.yawspeed = packet_in.yawspeed;
+        packet1.kcmvp_alg = packet_in.kcmvp_alg;
+        packet1.kcmvp_mode = packet_in.kcmvp_mode;
+        packet1.kcmvp_key = packet_in.kcmvp_key;
+        packet1.kcmvp_key_index = packet_in.kcmvp_key_index;
         
         mav_array_memcpy(packet1.repr_offset_q, packet_in.repr_offset_q, sizeof(float)*4);
+        mav_array_memcpy(packet1.kcmvp_iv, packet_in.kcmvp_iv, sizeof(uint8_t)*16);
         
 #ifdef MAVLINK_STATUS_FLAG_OUT_MAVLINK1
         if (status->flags & MAVLINK_STATUS_FLAG_OUT_MAVLINK1) {
@@ -1298,12 +1303,12 @@ static void mavlink_test_attitude_quaternion(uint8_t system_id, uint8_t componen
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_attitude_quaternion_pack(system_id, component_id, &msg , packet1.time_boot_ms , packet1.q1 , packet1.q2 , packet1.q3 , packet1.q4 , packet1.rollspeed , packet1.pitchspeed , packet1.yawspeed , packet1.repr_offset_q );
+    mavlink_msg_attitude_quaternion_pack(system_id, component_id, &msg , packet1.time_boot_ms , packet1.q1 , packet1.q2 , packet1.q3 , packet1.q4 , packet1.rollspeed , packet1.pitchspeed , packet1.yawspeed , packet1.repr_offset_q , packet1.kcmvp_alg , packet1.kcmvp_mode , packet1.kcmvp_key , packet1.kcmvp_key_index , packet1.kcmvp_iv );
     mavlink_msg_attitude_quaternion_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_attitude_quaternion_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.time_boot_ms , packet1.q1 , packet1.q2 , packet1.q3 , packet1.q4 , packet1.rollspeed , packet1.pitchspeed , packet1.yawspeed , packet1.repr_offset_q );
+    mavlink_msg_attitude_quaternion_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.time_boot_ms , packet1.q1 , packet1.q2 , packet1.q3 , packet1.q4 , packet1.rollspeed , packet1.pitchspeed , packet1.yawspeed , packet1.repr_offset_q , packet1.kcmvp_alg , packet1.kcmvp_mode , packet1.kcmvp_key , packet1.kcmvp_key_index , packet1.kcmvp_iv );
     mavlink_msg_attitude_quaternion_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
@@ -1316,7 +1321,7 @@ static void mavlink_test_attitude_quaternion(uint8_t system_id, uint8_t componen
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
         
         memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_attitude_quaternion_send(MAVLINK_COMM_1 , packet1.time_boot_ms , packet1.q1 , packet1.q2 , packet1.q3 , packet1.q4 , packet1.rollspeed , packet1.pitchspeed , packet1.yawspeed , packet1.repr_offset_q );
+    mavlink_msg_attitude_quaternion_send(MAVLINK_COMM_1 , packet1.time_boot_ms , packet1.q1 , packet1.q2 , packet1.q3 , packet1.q4 , packet1.rollspeed , packet1.pitchspeed , packet1.yawspeed , packet1.repr_offset_q , packet1.kcmvp_alg , packet1.kcmvp_mode , packet1.kcmvp_key , packet1.kcmvp_key_index , packet1.kcmvp_iv );
     mavlink_msg_attitude_quaternion_decode(last_msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
