@@ -798,7 +798,7 @@ static void mavlink_test_gps_raw_int(uint8_t system_id, uint8_t component_id, ma
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
     mavlink_gps_raw_int_t packet_in = {
-        93372036854775807ULL,963497880,963498088,963498296,18275,18379,18483,18587,89,156,963499024,963499232,963499440,963499648,963499856,19835
+        93372036854775807ULL,963497880,963498088,963498296,18275,18379,18483,18587,89,156,963499024,963499232,963499440,963499648,963499856,19835,161,228,39,106,{ 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188 }
     };
     mavlink_gps_raw_int_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
@@ -818,7 +818,12 @@ static void mavlink_test_gps_raw_int(uint8_t system_id, uint8_t component_id, ma
         packet1.vel_acc = packet_in.vel_acc;
         packet1.hdg_acc = packet_in.hdg_acc;
         packet1.yaw = packet_in.yaw;
+        packet1.kcmvp_alg = packet_in.kcmvp_alg;
+        packet1.kcmvp_mode = packet_in.kcmvp_mode;
+        packet1.kcmvp_key = packet_in.kcmvp_key;
+        packet1.kcmvp_key_index = packet_in.kcmvp_key_index;
         
+        mav_array_memcpy(packet1.kcmvp_iv, packet_in.kcmvp_iv, sizeof(uint8_t)*16);
         
 #ifdef MAVLINK_STATUS_FLAG_OUT_MAVLINK1
         if (status->flags & MAVLINK_STATUS_FLAG_OUT_MAVLINK1) {
@@ -832,12 +837,12 @@ static void mavlink_test_gps_raw_int(uint8_t system_id, uint8_t component_id, ma
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_gps_raw_int_pack(system_id, component_id, &msg , packet1.time_usec , packet1.fix_type , packet1.lat , packet1.lon , packet1.alt , packet1.eph , packet1.epv , packet1.vel , packet1.cog , packet1.satellites_visible , packet1.alt_ellipsoid , packet1.h_acc , packet1.v_acc , packet1.vel_acc , packet1.hdg_acc , packet1.yaw );
+    mavlink_msg_gps_raw_int_pack(system_id, component_id, &msg , packet1.time_usec , packet1.fix_type , packet1.lat , packet1.lon , packet1.alt , packet1.eph , packet1.epv , packet1.vel , packet1.cog , packet1.satellites_visible , packet1.alt_ellipsoid , packet1.h_acc , packet1.v_acc , packet1.vel_acc , packet1.hdg_acc , packet1.yaw , packet1.kcmvp_alg , packet1.kcmvp_mode , packet1.kcmvp_key , packet1.kcmvp_key_index , packet1.kcmvp_iv );
     mavlink_msg_gps_raw_int_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_gps_raw_int_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.time_usec , packet1.fix_type , packet1.lat , packet1.lon , packet1.alt , packet1.eph , packet1.epv , packet1.vel , packet1.cog , packet1.satellites_visible , packet1.alt_ellipsoid , packet1.h_acc , packet1.v_acc , packet1.vel_acc , packet1.hdg_acc , packet1.yaw );
+    mavlink_msg_gps_raw_int_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.time_usec , packet1.fix_type , packet1.lat , packet1.lon , packet1.alt , packet1.eph , packet1.epv , packet1.vel , packet1.cog , packet1.satellites_visible , packet1.alt_ellipsoid , packet1.h_acc , packet1.v_acc , packet1.vel_acc , packet1.hdg_acc , packet1.yaw , packet1.kcmvp_alg , packet1.kcmvp_mode , packet1.kcmvp_key , packet1.kcmvp_key_index , packet1.kcmvp_iv );
     mavlink_msg_gps_raw_int_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
@@ -850,7 +855,7 @@ static void mavlink_test_gps_raw_int(uint8_t system_id, uint8_t component_id, ma
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
         
         memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_gps_raw_int_send(MAVLINK_COMM_1 , packet1.time_usec , packet1.fix_type , packet1.lat , packet1.lon , packet1.alt , packet1.eph , packet1.epv , packet1.vel , packet1.cog , packet1.satellites_visible , packet1.alt_ellipsoid , packet1.h_acc , packet1.v_acc , packet1.vel_acc , packet1.hdg_acc , packet1.yaw );
+    mavlink_msg_gps_raw_int_send(MAVLINK_COMM_1 , packet1.time_usec , packet1.fix_type , packet1.lat , packet1.lon , packet1.alt , packet1.eph , packet1.epv , packet1.vel , packet1.cog , packet1.satellites_visible , packet1.alt_ellipsoid , packet1.h_acc , packet1.v_acc , packet1.vel_acc , packet1.hdg_acc , packet1.yaw , packet1.kcmvp_alg , packet1.kcmvp_mode , packet1.kcmvp_key , packet1.kcmvp_key_index , packet1.kcmvp_iv );
     mavlink_msg_gps_raw_int_decode(last_msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
@@ -1413,7 +1418,7 @@ static void mavlink_test_global_position_int(uint8_t system_id, uint8_t componen
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
     mavlink_global_position_int_t packet_in = {
-        963497464,963497672,963497880,963498088,963498296,18275,18379,18483,18587
+        963497464,963497672,963497880,963498088,963498296,18275,18379,18483,18587,89,156,223,34,{ 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116 }
     };
     mavlink_global_position_int_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
@@ -1426,7 +1431,12 @@ static void mavlink_test_global_position_int(uint8_t system_id, uint8_t componen
         packet1.vy = packet_in.vy;
         packet1.vz = packet_in.vz;
         packet1.hdg = packet_in.hdg;
+        packet1.kcmvp_alg = packet_in.kcmvp_alg;
+        packet1.kcmvp_mode = packet_in.kcmvp_mode;
+        packet1.kcmvp_key = packet_in.kcmvp_key;
+        packet1.kcmvp_key_index = packet_in.kcmvp_key_index;
         
+        mav_array_memcpy(packet1.kcmvp_iv, packet_in.kcmvp_iv, sizeof(uint8_t)*16);
         
 #ifdef MAVLINK_STATUS_FLAG_OUT_MAVLINK1
         if (status->flags & MAVLINK_STATUS_FLAG_OUT_MAVLINK1) {
@@ -1440,12 +1450,12 @@ static void mavlink_test_global_position_int(uint8_t system_id, uint8_t componen
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_global_position_int_pack(system_id, component_id, &msg , packet1.time_boot_ms , packet1.lat , packet1.lon , packet1.alt , packet1.relative_alt , packet1.vx , packet1.vy , packet1.vz , packet1.hdg );
+    mavlink_msg_global_position_int_pack(system_id, component_id, &msg , packet1.time_boot_ms , packet1.lat , packet1.lon , packet1.alt , packet1.relative_alt , packet1.vx , packet1.vy , packet1.vz , packet1.hdg , packet1.kcmvp_alg , packet1.kcmvp_mode , packet1.kcmvp_key , packet1.kcmvp_key_index , packet1.kcmvp_iv );
     mavlink_msg_global_position_int_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_global_position_int_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.time_boot_ms , packet1.lat , packet1.lon , packet1.alt , packet1.relative_alt , packet1.vx , packet1.vy , packet1.vz , packet1.hdg );
+    mavlink_msg_global_position_int_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.time_boot_ms , packet1.lat , packet1.lon , packet1.alt , packet1.relative_alt , packet1.vx , packet1.vy , packet1.vz , packet1.hdg , packet1.kcmvp_alg , packet1.kcmvp_mode , packet1.kcmvp_key , packet1.kcmvp_key_index , packet1.kcmvp_iv );
     mavlink_msg_global_position_int_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
@@ -1458,7 +1468,7 @@ static void mavlink_test_global_position_int(uint8_t system_id, uint8_t componen
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
         
         memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_global_position_int_send(MAVLINK_COMM_1 , packet1.time_boot_ms , packet1.lat , packet1.lon , packet1.alt , packet1.relative_alt , packet1.vx , packet1.vy , packet1.vz , packet1.hdg );
+    mavlink_msg_global_position_int_send(MAVLINK_COMM_1 , packet1.time_boot_ms , packet1.lat , packet1.lon , packet1.alt , packet1.relative_alt , packet1.vx , packet1.vy , packet1.vz , packet1.hdg , packet1.kcmvp_alg , packet1.kcmvp_mode , packet1.kcmvp_key , packet1.kcmvp_key_index , packet1.kcmvp_iv );
     mavlink_msg_global_position_int_decode(last_msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
@@ -1820,7 +1830,7 @@ static void mavlink_test_mission_item(uint8_t system_id, uint8_t component_id, m
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
     mavlink_mission_item_t packet_in = {
-        17.0,45.0,73.0,101.0,129.0,157.0,185.0,18691,18795,101,168,235,46,113,180
+        17.0,45.0,73.0,101.0,129.0,157.0,185.0,18691,18795,101,168,235,46,113,180,247,58,125,192,{ 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18 }
     };
     mavlink_mission_item_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
@@ -1839,7 +1849,12 @@ static void mavlink_test_mission_item(uint8_t system_id, uint8_t component_id, m
         packet1.current = packet_in.current;
         packet1.autocontinue = packet_in.autocontinue;
         packet1.mission_type = packet_in.mission_type;
+        packet1.kcmvp_alg = packet_in.kcmvp_alg;
+        packet1.kcmvp_mode = packet_in.kcmvp_mode;
+        packet1.kcmvp_key = packet_in.kcmvp_key;
+        packet1.kcmvp_key_index = packet_in.kcmvp_key_index;
         
+        mav_array_memcpy(packet1.kcmvp_iv, packet_in.kcmvp_iv, sizeof(uint8_t)*16);
         
 #ifdef MAVLINK_STATUS_FLAG_OUT_MAVLINK1
         if (status->flags & MAVLINK_STATUS_FLAG_OUT_MAVLINK1) {
@@ -1853,12 +1868,12 @@ static void mavlink_test_mission_item(uint8_t system_id, uint8_t component_id, m
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_mission_item_pack(system_id, component_id, &msg , packet1.target_system , packet1.target_component , packet1.seq , packet1.frame , packet1.command , packet1.current , packet1.autocontinue , packet1.param1 , packet1.param2 , packet1.param3 , packet1.param4 , packet1.x , packet1.y , packet1.z , packet1.mission_type );
+    mavlink_msg_mission_item_pack(system_id, component_id, &msg , packet1.target_system , packet1.target_component , packet1.seq , packet1.frame , packet1.command , packet1.current , packet1.autocontinue , packet1.param1 , packet1.param2 , packet1.param3 , packet1.param4 , packet1.x , packet1.y , packet1.z , packet1.mission_type , packet1.kcmvp_alg , packet1.kcmvp_mode , packet1.kcmvp_key , packet1.kcmvp_key_index , packet1.kcmvp_iv );
     mavlink_msg_mission_item_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_mission_item_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.target_system , packet1.target_component , packet1.seq , packet1.frame , packet1.command , packet1.current , packet1.autocontinue , packet1.param1 , packet1.param2 , packet1.param3 , packet1.param4 , packet1.x , packet1.y , packet1.z , packet1.mission_type );
+    mavlink_msg_mission_item_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.target_system , packet1.target_component , packet1.seq , packet1.frame , packet1.command , packet1.current , packet1.autocontinue , packet1.param1 , packet1.param2 , packet1.param3 , packet1.param4 , packet1.x , packet1.y , packet1.z , packet1.mission_type , packet1.kcmvp_alg , packet1.kcmvp_mode , packet1.kcmvp_key , packet1.kcmvp_key_index , packet1.kcmvp_iv );
     mavlink_msg_mission_item_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
@@ -1871,7 +1886,7 @@ static void mavlink_test_mission_item(uint8_t system_id, uint8_t component_id, m
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
         
         memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_mission_item_send(MAVLINK_COMM_1 , packet1.target_system , packet1.target_component , packet1.seq , packet1.frame , packet1.command , packet1.current , packet1.autocontinue , packet1.param1 , packet1.param2 , packet1.param3 , packet1.param4 , packet1.x , packet1.y , packet1.z , packet1.mission_type );
+    mavlink_msg_mission_item_send(MAVLINK_COMM_1 , packet1.target_system , packet1.target_component , packet1.seq , packet1.frame , packet1.command , packet1.current , packet1.autocontinue , packet1.param1 , packet1.param2 , packet1.param3 , packet1.param4 , packet1.x , packet1.y , packet1.z , packet1.mission_type , packet1.kcmvp_alg , packet1.kcmvp_mode , packet1.kcmvp_key , packet1.kcmvp_key_index , packet1.kcmvp_iv );
     mavlink_msg_mission_item_decode(last_msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
@@ -1893,7 +1908,7 @@ static void mavlink_test_mission_request(uint8_t system_id, uint8_t component_id
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
     mavlink_mission_request_t packet_in = {
-        17235,139,206,17
+        17235,139,206,17,84,151,218,29,{ 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111 }
     };
     mavlink_mission_request_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
@@ -1901,7 +1916,12 @@ static void mavlink_test_mission_request(uint8_t system_id, uint8_t component_id
         packet1.target_system = packet_in.target_system;
         packet1.target_component = packet_in.target_component;
         packet1.mission_type = packet_in.mission_type;
+        packet1.kcmvp_alg = packet_in.kcmvp_alg;
+        packet1.kcmvp_mode = packet_in.kcmvp_mode;
+        packet1.kcmvp_key = packet_in.kcmvp_key;
+        packet1.kcmvp_key_index = packet_in.kcmvp_key_index;
         
+        mav_array_memcpy(packet1.kcmvp_iv, packet_in.kcmvp_iv, sizeof(uint8_t)*16);
         
 #ifdef MAVLINK_STATUS_FLAG_OUT_MAVLINK1
         if (status->flags & MAVLINK_STATUS_FLAG_OUT_MAVLINK1) {
@@ -1915,12 +1935,12 @@ static void mavlink_test_mission_request(uint8_t system_id, uint8_t component_id
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_mission_request_pack(system_id, component_id, &msg , packet1.target_system , packet1.target_component , packet1.seq , packet1.mission_type );
+    mavlink_msg_mission_request_pack(system_id, component_id, &msg , packet1.target_system , packet1.target_component , packet1.seq , packet1.mission_type , packet1.kcmvp_alg , packet1.kcmvp_mode , packet1.kcmvp_key , packet1.kcmvp_key_index , packet1.kcmvp_iv );
     mavlink_msg_mission_request_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_mission_request_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.target_system , packet1.target_component , packet1.seq , packet1.mission_type );
+    mavlink_msg_mission_request_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.target_system , packet1.target_component , packet1.seq , packet1.mission_type , packet1.kcmvp_alg , packet1.kcmvp_mode , packet1.kcmvp_key , packet1.kcmvp_key_index , packet1.kcmvp_iv );
     mavlink_msg_mission_request_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
@@ -1933,7 +1953,7 @@ static void mavlink_test_mission_request(uint8_t system_id, uint8_t component_id
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
         
         memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_mission_request_send(MAVLINK_COMM_1 , packet1.target_system , packet1.target_component , packet1.seq , packet1.mission_type );
+    mavlink_msg_mission_request_send(MAVLINK_COMM_1 , packet1.target_system , packet1.target_component , packet1.seq , packet1.mission_type , packet1.kcmvp_alg , packet1.kcmvp_mode , packet1.kcmvp_key , packet1.kcmvp_key_index , packet1.kcmvp_iv );
     mavlink_msg_mission_request_decode(last_msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
@@ -2575,7 +2595,7 @@ static void mavlink_test_mission_request_int(uint8_t system_id, uint8_t componen
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
     mavlink_mission_request_int_t packet_in = {
-        17235,139,206,17
+        17235,139,206,17,84,151,218,29,{ 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111 }
     };
     mavlink_mission_request_int_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
@@ -2583,7 +2603,12 @@ static void mavlink_test_mission_request_int(uint8_t system_id, uint8_t componen
         packet1.target_system = packet_in.target_system;
         packet1.target_component = packet_in.target_component;
         packet1.mission_type = packet_in.mission_type;
+        packet1.kcmvp_alg = packet_in.kcmvp_alg;
+        packet1.kcmvp_mode = packet_in.kcmvp_mode;
+        packet1.kcmvp_key = packet_in.kcmvp_key;
+        packet1.kcmvp_key_index = packet_in.kcmvp_key_index;
         
+        mav_array_memcpy(packet1.kcmvp_iv, packet_in.kcmvp_iv, sizeof(uint8_t)*16);
         
 #ifdef MAVLINK_STATUS_FLAG_OUT_MAVLINK1
         if (status->flags & MAVLINK_STATUS_FLAG_OUT_MAVLINK1) {
@@ -2597,12 +2622,12 @@ static void mavlink_test_mission_request_int(uint8_t system_id, uint8_t componen
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_mission_request_int_pack(system_id, component_id, &msg , packet1.target_system , packet1.target_component , packet1.seq , packet1.mission_type );
+    mavlink_msg_mission_request_int_pack(system_id, component_id, &msg , packet1.target_system , packet1.target_component , packet1.seq , packet1.mission_type , packet1.kcmvp_alg , packet1.kcmvp_mode , packet1.kcmvp_key , packet1.kcmvp_key_index , packet1.kcmvp_iv );
     mavlink_msg_mission_request_int_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_mission_request_int_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.target_system , packet1.target_component , packet1.seq , packet1.mission_type );
+    mavlink_msg_mission_request_int_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.target_system , packet1.target_component , packet1.seq , packet1.mission_type , packet1.kcmvp_alg , packet1.kcmvp_mode , packet1.kcmvp_key , packet1.kcmvp_key_index , packet1.kcmvp_iv );
     mavlink_msg_mission_request_int_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
@@ -2615,7 +2640,7 @@ static void mavlink_test_mission_request_int(uint8_t system_id, uint8_t componen
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
         
         memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_mission_request_int_send(MAVLINK_COMM_1 , packet1.target_system , packet1.target_component , packet1.seq , packet1.mission_type );
+    mavlink_msg_mission_request_int_send(MAVLINK_COMM_1 , packet1.target_system , packet1.target_component , packet1.seq , packet1.mission_type , packet1.kcmvp_alg , packet1.kcmvp_mode , packet1.kcmvp_key , packet1.kcmvp_key_index , packet1.kcmvp_iv );
     mavlink_msg_mission_request_int_decode(last_msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
@@ -3386,7 +3411,7 @@ static void mavlink_test_mission_item_int(uint8_t system_id, uint8_t component_i
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
     mavlink_mission_item_int_t packet_in = {
-        17.0,45.0,73.0,101.0,963498296,963498504,185.0,18691,18795,101,168,235,46,113,180
+        17.0,45.0,73.0,101.0,963498296,963498504,185.0,18691,18795,101,168,235,46,113,180,247,58,125,192,{ 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18 }
     };
     mavlink_mission_item_int_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
@@ -3405,7 +3430,12 @@ static void mavlink_test_mission_item_int(uint8_t system_id, uint8_t component_i
         packet1.current = packet_in.current;
         packet1.autocontinue = packet_in.autocontinue;
         packet1.mission_type = packet_in.mission_type;
+        packet1.kcmvp_alg = packet_in.kcmvp_alg;
+        packet1.kcmvp_mode = packet_in.kcmvp_mode;
+        packet1.kcmvp_key = packet_in.kcmvp_key;
+        packet1.kcmvp_key_index = packet_in.kcmvp_key_index;
         
+        mav_array_memcpy(packet1.kcmvp_iv, packet_in.kcmvp_iv, sizeof(uint8_t)*16);
         
 #ifdef MAVLINK_STATUS_FLAG_OUT_MAVLINK1
         if (status->flags & MAVLINK_STATUS_FLAG_OUT_MAVLINK1) {
@@ -3419,12 +3449,12 @@ static void mavlink_test_mission_item_int(uint8_t system_id, uint8_t component_i
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_mission_item_int_pack(system_id, component_id, &msg , packet1.target_system , packet1.target_component , packet1.seq , packet1.frame , packet1.command , packet1.current , packet1.autocontinue , packet1.param1 , packet1.param2 , packet1.param3 , packet1.param4 , packet1.x , packet1.y , packet1.z , packet1.mission_type );
+    mavlink_msg_mission_item_int_pack(system_id, component_id, &msg , packet1.target_system , packet1.target_component , packet1.seq , packet1.frame , packet1.command , packet1.current , packet1.autocontinue , packet1.param1 , packet1.param2 , packet1.param3 , packet1.param4 , packet1.x , packet1.y , packet1.z , packet1.mission_type , packet1.kcmvp_alg , packet1.kcmvp_mode , packet1.kcmvp_key , packet1.kcmvp_key_index , packet1.kcmvp_iv );
     mavlink_msg_mission_item_int_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_mission_item_int_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.target_system , packet1.target_component , packet1.seq , packet1.frame , packet1.command , packet1.current , packet1.autocontinue , packet1.param1 , packet1.param2 , packet1.param3 , packet1.param4 , packet1.x , packet1.y , packet1.z , packet1.mission_type );
+    mavlink_msg_mission_item_int_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.target_system , packet1.target_component , packet1.seq , packet1.frame , packet1.command , packet1.current , packet1.autocontinue , packet1.param1 , packet1.param2 , packet1.param3 , packet1.param4 , packet1.x , packet1.y , packet1.z , packet1.mission_type , packet1.kcmvp_alg , packet1.kcmvp_mode , packet1.kcmvp_key , packet1.kcmvp_key_index , packet1.kcmvp_iv );
     mavlink_msg_mission_item_int_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
@@ -3437,7 +3467,7 @@ static void mavlink_test_mission_item_int(uint8_t system_id, uint8_t component_i
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
         
         memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_mission_item_int_send(MAVLINK_COMM_1 , packet1.target_system , packet1.target_component , packet1.seq , packet1.frame , packet1.command , packet1.current , packet1.autocontinue , packet1.param1 , packet1.param2 , packet1.param3 , packet1.param4 , packet1.x , packet1.y , packet1.z , packet1.mission_type );
+    mavlink_msg_mission_item_int_send(MAVLINK_COMM_1 , packet1.target_system , packet1.target_component , packet1.seq , packet1.frame , packet1.command , packet1.current , packet1.autocontinue , packet1.param1 , packet1.param2 , packet1.param3 , packet1.param4 , packet1.x , packet1.y , packet1.z , packet1.mission_type , packet1.kcmvp_alg , packet1.kcmvp_mode , packet1.kcmvp_key , packet1.kcmvp_key_index , packet1.kcmvp_iv );
     mavlink_msg_mission_item_int_decode(last_msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
@@ -3523,7 +3553,7 @@ static void mavlink_test_command_int(uint8_t system_id, uint8_t component_id, ma
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
     mavlink_command_int_t packet_in = {
-        17.0,45.0,73.0,101.0,963498296,963498504,185.0,18691,223,34,101,168,235
+        17.0,45.0,73.0,101.0,963498296,963498504,185.0,18691,223,34,101,168,235,46,113,180,247,{ 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73 }
     };
     mavlink_command_int_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
@@ -3540,7 +3570,12 @@ static void mavlink_test_command_int(uint8_t system_id, uint8_t component_id, ma
         packet1.frame = packet_in.frame;
         packet1.current = packet_in.current;
         packet1.autocontinue = packet_in.autocontinue;
+        packet1.kcmvp_alg = packet_in.kcmvp_alg;
+        packet1.kcmvp_mode = packet_in.kcmvp_mode;
+        packet1.kcmvp_key = packet_in.kcmvp_key;
+        packet1.kcmvp_key_index = packet_in.kcmvp_key_index;
         
+        mav_array_memcpy(packet1.kcmvp_iv, packet_in.kcmvp_iv, sizeof(uint8_t)*16);
         
 #ifdef MAVLINK_STATUS_FLAG_OUT_MAVLINK1
         if (status->flags & MAVLINK_STATUS_FLAG_OUT_MAVLINK1) {
@@ -3554,12 +3589,12 @@ static void mavlink_test_command_int(uint8_t system_id, uint8_t component_id, ma
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_command_int_pack(system_id, component_id, &msg , packet1.target_system , packet1.target_component , packet1.frame , packet1.command , packet1.current , packet1.autocontinue , packet1.param1 , packet1.param2 , packet1.param3 , packet1.param4 , packet1.x , packet1.y , packet1.z );
+    mavlink_msg_command_int_pack(system_id, component_id, &msg , packet1.target_system , packet1.target_component , packet1.frame , packet1.command , packet1.current , packet1.autocontinue , packet1.param1 , packet1.param2 , packet1.param3 , packet1.param4 , packet1.x , packet1.y , packet1.z , packet1.kcmvp_alg , packet1.kcmvp_mode , packet1.kcmvp_key , packet1.kcmvp_key_index , packet1.kcmvp_iv );
     mavlink_msg_command_int_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_command_int_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.target_system , packet1.target_component , packet1.frame , packet1.command , packet1.current , packet1.autocontinue , packet1.param1 , packet1.param2 , packet1.param3 , packet1.param4 , packet1.x , packet1.y , packet1.z );
+    mavlink_msg_command_int_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.target_system , packet1.target_component , packet1.frame , packet1.command , packet1.current , packet1.autocontinue , packet1.param1 , packet1.param2 , packet1.param3 , packet1.param4 , packet1.x , packet1.y , packet1.z , packet1.kcmvp_alg , packet1.kcmvp_mode , packet1.kcmvp_key , packet1.kcmvp_key_index , packet1.kcmvp_iv );
     mavlink_msg_command_int_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
@@ -3572,7 +3607,7 @@ static void mavlink_test_command_int(uint8_t system_id, uint8_t component_id, ma
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
         
         memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_command_int_send(MAVLINK_COMM_1 , packet1.target_system , packet1.target_component , packet1.frame , packet1.command , packet1.current , packet1.autocontinue , packet1.param1 , packet1.param2 , packet1.param3 , packet1.param4 , packet1.x , packet1.y , packet1.z );
+    mavlink_msg_command_int_send(MAVLINK_COMM_1 , packet1.target_system , packet1.target_component , packet1.frame , packet1.command , packet1.current , packet1.autocontinue , packet1.param1 , packet1.param2 , packet1.param3 , packet1.param4 , packet1.x , packet1.y , packet1.z , packet1.kcmvp_alg , packet1.kcmvp_mode , packet1.kcmvp_key , packet1.kcmvp_key_index , packet1.kcmvp_iv );
     mavlink_msg_command_int_decode(last_msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
@@ -3594,7 +3629,7 @@ static void mavlink_test_command_long(uint8_t system_id, uint8_t component_id, m
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
     mavlink_command_long_t packet_in = {
-        17.0,45.0,73.0,101.0,129.0,157.0,185.0,18691,223,34,101
+        17.0,45.0,73.0,101.0,129.0,157.0,185.0,18691,223,34,101,168,235,46,113,{ 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195 }
     };
     mavlink_command_long_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
@@ -3609,7 +3644,12 @@ static void mavlink_test_command_long(uint8_t system_id, uint8_t component_id, m
         packet1.target_system = packet_in.target_system;
         packet1.target_component = packet_in.target_component;
         packet1.confirmation = packet_in.confirmation;
+        packet1.kcmvp_alg = packet_in.kcmvp_alg;
+        packet1.kcmvp_mode = packet_in.kcmvp_mode;
+        packet1.kcmvp_key = packet_in.kcmvp_key;
+        packet1.kcmvp_key_index = packet_in.kcmvp_key_index;
         
+        mav_array_memcpy(packet1.kcmvp_iv, packet_in.kcmvp_iv, sizeof(uint8_t)*16);
         
 #ifdef MAVLINK_STATUS_FLAG_OUT_MAVLINK1
         if (status->flags & MAVLINK_STATUS_FLAG_OUT_MAVLINK1) {
@@ -3623,12 +3663,12 @@ static void mavlink_test_command_long(uint8_t system_id, uint8_t component_id, m
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_command_long_pack(system_id, component_id, &msg , packet1.target_system , packet1.target_component , packet1.command , packet1.confirmation , packet1.param1 , packet1.param2 , packet1.param3 , packet1.param4 , packet1.param5 , packet1.param6 , packet1.param7 );
+    mavlink_msg_command_long_pack(system_id, component_id, &msg , packet1.target_system , packet1.target_component , packet1.command , packet1.confirmation , packet1.param1 , packet1.param2 , packet1.param3 , packet1.param4 , packet1.param5 , packet1.param6 , packet1.param7 , packet1.kcmvp_alg , packet1.kcmvp_mode , packet1.kcmvp_key , packet1.kcmvp_key_index , packet1.kcmvp_iv );
     mavlink_msg_command_long_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_command_long_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.target_system , packet1.target_component , packet1.command , packet1.confirmation , packet1.param1 , packet1.param2 , packet1.param3 , packet1.param4 , packet1.param5 , packet1.param6 , packet1.param7 );
+    mavlink_msg_command_long_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.target_system , packet1.target_component , packet1.command , packet1.confirmation , packet1.param1 , packet1.param2 , packet1.param3 , packet1.param4 , packet1.param5 , packet1.param6 , packet1.param7 , packet1.kcmvp_alg , packet1.kcmvp_mode , packet1.kcmvp_key , packet1.kcmvp_key_index , packet1.kcmvp_iv );
     mavlink_msg_command_long_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
@@ -3641,7 +3681,7 @@ static void mavlink_test_command_long(uint8_t system_id, uint8_t component_id, m
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
         
         memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_command_long_send(MAVLINK_COMM_1 , packet1.target_system , packet1.target_component , packet1.command , packet1.confirmation , packet1.param1 , packet1.param2 , packet1.param3 , packet1.param4 , packet1.param5 , packet1.param6 , packet1.param7 );
+    mavlink_msg_command_long_send(MAVLINK_COMM_1 , packet1.target_system , packet1.target_component , packet1.command , packet1.confirmation , packet1.param1 , packet1.param2 , packet1.param3 , packet1.param4 , packet1.param5 , packet1.param6 , packet1.param7 , packet1.kcmvp_alg , packet1.kcmvp_mode , packet1.kcmvp_key , packet1.kcmvp_key_index , packet1.kcmvp_iv );
     mavlink_msg_command_long_decode(last_msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
@@ -3663,7 +3703,7 @@ static void mavlink_test_command_ack(uint8_t system_id, uint8_t component_id, ma
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
     mavlink_command_ack_t packet_in = {
-        17235,139,206,963497672,29,96
+        17235,139,206,963497672,29,96,163,230,41,108,{ 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190 }
     };
     mavlink_command_ack_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
@@ -3673,7 +3713,12 @@ static void mavlink_test_command_ack(uint8_t system_id, uint8_t component_id, ma
         packet1.result_param2 = packet_in.result_param2;
         packet1.target_system = packet_in.target_system;
         packet1.target_component = packet_in.target_component;
+        packet1.kcmvp_alg = packet_in.kcmvp_alg;
+        packet1.kcmvp_mode = packet_in.kcmvp_mode;
+        packet1.kcmvp_key = packet_in.kcmvp_key;
+        packet1.kcmvp_key_index = packet_in.kcmvp_key_index;
         
+        mav_array_memcpy(packet1.kcmvp_iv, packet_in.kcmvp_iv, sizeof(uint8_t)*16);
         
 #ifdef MAVLINK_STATUS_FLAG_OUT_MAVLINK1
         if (status->flags & MAVLINK_STATUS_FLAG_OUT_MAVLINK1) {
@@ -3687,12 +3732,12 @@ static void mavlink_test_command_ack(uint8_t system_id, uint8_t component_id, ma
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_command_ack_pack(system_id, component_id, &msg , packet1.command , packet1.result , packet1.progress , packet1.result_param2 , packet1.target_system , packet1.target_component );
+    mavlink_msg_command_ack_pack(system_id, component_id, &msg , packet1.command , packet1.result , packet1.progress , packet1.result_param2 , packet1.target_system , packet1.target_component , packet1.kcmvp_alg , packet1.kcmvp_mode , packet1.kcmvp_key , packet1.kcmvp_key_index , packet1.kcmvp_iv );
     mavlink_msg_command_ack_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_command_ack_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.command , packet1.result , packet1.progress , packet1.result_param2 , packet1.target_system , packet1.target_component );
+    mavlink_msg_command_ack_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.command , packet1.result , packet1.progress , packet1.result_param2 , packet1.target_system , packet1.target_component , packet1.kcmvp_alg , packet1.kcmvp_mode , packet1.kcmvp_key , packet1.kcmvp_key_index , packet1.kcmvp_iv );
     mavlink_msg_command_ack_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
@@ -3705,7 +3750,7 @@ static void mavlink_test_command_ack(uint8_t system_id, uint8_t component_id, ma
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
         
         memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_command_ack_send(MAVLINK_COMM_1 , packet1.command , packet1.result , packet1.progress , packet1.result_param2 , packet1.target_system , packet1.target_component );
+    mavlink_msg_command_ack_send(MAVLINK_COMM_1 , packet1.command , packet1.result , packet1.progress , packet1.result_param2 , packet1.target_system , packet1.target_component , packet1.kcmvp_alg , packet1.kcmvp_mode , packet1.kcmvp_key , packet1.kcmvp_key_index , packet1.kcmvp_iv );
     mavlink_msg_command_ack_decode(last_msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
@@ -3727,14 +3772,19 @@ static void mavlink_test_command_cancel(uint8_t system_id, uint8_t component_id,
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
     mavlink_command_cancel_t packet_in = {
-        17235,139,206
+        17235,139,206,17,84,151,218,{ 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44 }
     };
     mavlink_command_cancel_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
         packet1.command = packet_in.command;
         packet1.target_system = packet_in.target_system;
         packet1.target_component = packet_in.target_component;
+        packet1.kcmvp_alg = packet_in.kcmvp_alg;
+        packet1.kcmvp_mode = packet_in.kcmvp_mode;
+        packet1.kcmvp_key = packet_in.kcmvp_key;
+        packet1.kcmvp_key_index = packet_in.kcmvp_key_index;
         
+        mav_array_memcpy(packet1.kcmvp_iv, packet_in.kcmvp_iv, sizeof(uint8_t)*16);
         
 #ifdef MAVLINK_STATUS_FLAG_OUT_MAVLINK1
         if (status->flags & MAVLINK_STATUS_FLAG_OUT_MAVLINK1) {
@@ -3748,12 +3798,12 @@ static void mavlink_test_command_cancel(uint8_t system_id, uint8_t component_id,
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_command_cancel_pack(system_id, component_id, &msg , packet1.target_system , packet1.target_component , packet1.command );
+    mavlink_msg_command_cancel_pack(system_id, component_id, &msg , packet1.target_system , packet1.target_component , packet1.command , packet1.kcmvp_alg , packet1.kcmvp_mode , packet1.kcmvp_key , packet1.kcmvp_key_index , packet1.kcmvp_iv );
     mavlink_msg_command_cancel_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_command_cancel_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.target_system , packet1.target_component , packet1.command );
+    mavlink_msg_command_cancel_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.target_system , packet1.target_component , packet1.command , packet1.kcmvp_alg , packet1.kcmvp_mode , packet1.kcmvp_key , packet1.kcmvp_key_index , packet1.kcmvp_iv );
     mavlink_msg_command_cancel_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
@@ -3766,7 +3816,7 @@ static void mavlink_test_command_cancel(uint8_t system_id, uint8_t component_id,
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
         
         memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_command_cancel_send(MAVLINK_COMM_1 , packet1.target_system , packet1.target_component , packet1.command );
+    mavlink_msg_command_cancel_send(MAVLINK_COMM_1 , packet1.target_system , packet1.target_component , packet1.command , packet1.kcmvp_alg , packet1.kcmvp_mode , packet1.kcmvp_key , packet1.kcmvp_key_index , packet1.kcmvp_iv );
     mavlink_msg_command_cancel_decode(last_msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
@@ -8142,371 +8192,6 @@ static void mavlink_test_ptp_timesync(uint8_t system_id, uint8_t component_id, m
 #ifdef MAVLINK_HAVE_GET_MESSAGE_INFO
     MAVLINK_ASSERT(mavlink_get_message_info_by_name("PTP_TIMESYNC") != NULL);
     MAVLINK_ASSERT(mavlink_get_message_info_by_id(MAVLINK_MSG_ID_PTP_TIMESYNC) != NULL);
-#endif
-}
-
-static void mavlink_test_kcmvp_set_encrypt(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
-{
-#ifdef MAVLINK_STATUS_FLAG_OUT_MAVLINK1
-    mavlink_status_t *status = mavlink_get_channel_status(MAVLINK_COMM_0);
-        if ((status->flags & MAVLINK_STATUS_FLAG_OUT_MAVLINK1) && MAVLINK_MSG_ID_KCMVP_SET_ENCRYPT >= 256) {
-            return;
-        }
-#endif
-    mavlink_message_t msg;
-        uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
-        uint16_t i;
-    mavlink_kcmvp_set_encrypt_t packet_in = {
-        5,72
-    };
-    mavlink_kcmvp_set_encrypt_t packet1, packet2;
-        memset(&packet1, 0, sizeof(packet1));
-        packet1.algorithm_type = packet_in.algorithm_type;
-        packet1.key_index = packet_in.key_index;
-        
-        
-#ifdef MAVLINK_STATUS_FLAG_OUT_MAVLINK1
-        if (status->flags & MAVLINK_STATUS_FLAG_OUT_MAVLINK1) {
-           // cope with extensions
-           memset(MAVLINK_MSG_ID_KCMVP_SET_ENCRYPT_MIN_LEN + (char *)&packet1, 0, sizeof(packet1)-MAVLINK_MSG_ID_KCMVP_SET_ENCRYPT_MIN_LEN);
-        }
-#endif
-        memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_kcmvp_set_encrypt_encode(system_id, component_id, &msg, &packet1);
-    mavlink_msg_kcmvp_set_encrypt_decode(&msg, &packet2);
-        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
-
-        memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_kcmvp_set_encrypt_pack(system_id, component_id, &msg , packet1.algorithm_type , packet1.key_index );
-    mavlink_msg_kcmvp_set_encrypt_decode(&msg, &packet2);
-        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
-
-        memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_kcmvp_set_encrypt_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.algorithm_type , packet1.key_index );
-    mavlink_msg_kcmvp_set_encrypt_decode(&msg, &packet2);
-        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
-
-        memset(&packet2, 0, sizeof(packet2));
-        mavlink_msg_to_send_buffer(buffer, &msg);
-        for (i=0; i<mavlink_msg_get_send_buffer_length(&msg); i++) {
-            comm_send_ch(MAVLINK_COMM_0, buffer[i]);
-        }
-    mavlink_msg_kcmvp_set_encrypt_decode(last_msg, &packet2);
-        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
-        
-        memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_kcmvp_set_encrypt_send(MAVLINK_COMM_1 , packet1.algorithm_type , packet1.key_index );
-    mavlink_msg_kcmvp_set_encrypt_decode(last_msg, &packet2);
-        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
-
-#ifdef MAVLINK_HAVE_GET_MESSAGE_INFO
-    MAVLINK_ASSERT(mavlink_get_message_info_by_name("KCMVP_SET_ENCRYPT") != NULL);
-    MAVLINK_ASSERT(mavlink_get_message_info_by_id(MAVLINK_MSG_ID_KCMVP_SET_ENCRYPT) != NULL);
-#endif
-}
-
-static void mavlink_test_kcmvp_encrypt_mode_on_off(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
-{
-#ifdef MAVLINK_STATUS_FLAG_OUT_MAVLINK1
-    mavlink_status_t *status = mavlink_get_channel_status(MAVLINK_COMM_0);
-        if ((status->flags & MAVLINK_STATUS_FLAG_OUT_MAVLINK1) && MAVLINK_MSG_ID_KCMVP_ENCRYPT_MODE_ON_OFF >= 256) {
-            return;
-        }
-#endif
-    mavlink_message_t msg;
-        uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
-        uint16_t i;
-    mavlink_kcmvp_encrypt_mode_on_off_t packet_in = {
-        5,72
-    };
-    mavlink_kcmvp_encrypt_mode_on_off_t packet1, packet2;
-        memset(&packet1, 0, sizeof(packet1));
-        packet1.kcmvp_encrypt_mode_on = packet_in.kcmvp_encrypt_mode_on;
-        packet1.kcmvp_encrypt_mode_off = packet_in.kcmvp_encrypt_mode_off;
-        
-        
-#ifdef MAVLINK_STATUS_FLAG_OUT_MAVLINK1
-        if (status->flags & MAVLINK_STATUS_FLAG_OUT_MAVLINK1) {
-           // cope with extensions
-           memset(MAVLINK_MSG_ID_KCMVP_ENCRYPT_MODE_ON_OFF_MIN_LEN + (char *)&packet1, 0, sizeof(packet1)-MAVLINK_MSG_ID_KCMVP_ENCRYPT_MODE_ON_OFF_MIN_LEN);
-        }
-#endif
-        memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_kcmvp_encrypt_mode_on_off_encode(system_id, component_id, &msg, &packet1);
-    mavlink_msg_kcmvp_encrypt_mode_on_off_decode(&msg, &packet2);
-        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
-
-        memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_kcmvp_encrypt_mode_on_off_pack(system_id, component_id, &msg , packet1.kcmvp_encrypt_mode_on , packet1.kcmvp_encrypt_mode_off );
-    mavlink_msg_kcmvp_encrypt_mode_on_off_decode(&msg, &packet2);
-        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
-
-        memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_kcmvp_encrypt_mode_on_off_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.kcmvp_encrypt_mode_on , packet1.kcmvp_encrypt_mode_off );
-    mavlink_msg_kcmvp_encrypt_mode_on_off_decode(&msg, &packet2);
-        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
-
-        memset(&packet2, 0, sizeof(packet2));
-        mavlink_msg_to_send_buffer(buffer, &msg);
-        for (i=0; i<mavlink_msg_get_send_buffer_length(&msg); i++) {
-            comm_send_ch(MAVLINK_COMM_0, buffer[i]);
-        }
-    mavlink_msg_kcmvp_encrypt_mode_on_off_decode(last_msg, &packet2);
-        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
-        
-        memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_kcmvp_encrypt_mode_on_off_send(MAVLINK_COMM_1 , packet1.kcmvp_encrypt_mode_on , packet1.kcmvp_encrypt_mode_off );
-    mavlink_msg_kcmvp_encrypt_mode_on_off_decode(last_msg, &packet2);
-        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
-
-#ifdef MAVLINK_HAVE_GET_MESSAGE_INFO
-    MAVLINK_ASSERT(mavlink_get_message_info_by_name("KCMVP_ENCRYPT_MODE_ON_OFF") != NULL);
-    MAVLINK_ASSERT(mavlink_get_message_info_by_id(MAVLINK_MSG_ID_KCMVP_ENCRYPT_MODE_ON_OFF) != NULL);
-#endif
-}
-
-static void mavlink_test_kcmvp_encrypted_mission_item(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
-{
-#ifdef MAVLINK_STATUS_FLAG_OUT_MAVLINK1
-    mavlink_status_t *status = mavlink_get_channel_status(MAVLINK_COMM_0);
-        if ((status->flags & MAVLINK_STATUS_FLAG_OUT_MAVLINK1) && MAVLINK_MSG_ID_KCMVP_ENCRYPTED_MISSION_ITEM >= 256) {
-            return;
-        }
-#endif
-    mavlink_message_t msg;
-        uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
-        uint16_t i;
-    mavlink_kcmvp_encrypted_mission_item_t packet_in = {
-        5,72,{ 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178 },{ 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18 }
-    };
-    mavlink_kcmvp_encrypted_mission_item_t packet1, packet2;
-        memset(&packet1, 0, sizeof(packet1));
-        packet1.sysid = packet_in.sysid;
-        packet1.compid = packet_in.compid;
-        
-        mav_array_memcpy(packet1.encrypted_mission, packet_in.encrypted_mission, sizeof(uint8_t)*40);
-        mav_array_memcpy(packet1.counter_array, packet_in.counter_array, sizeof(uint8_t)*16);
-        
-#ifdef MAVLINK_STATUS_FLAG_OUT_MAVLINK1
-        if (status->flags & MAVLINK_STATUS_FLAG_OUT_MAVLINK1) {
-           // cope with extensions
-           memset(MAVLINK_MSG_ID_KCMVP_ENCRYPTED_MISSION_ITEM_MIN_LEN + (char *)&packet1, 0, sizeof(packet1)-MAVLINK_MSG_ID_KCMVP_ENCRYPTED_MISSION_ITEM_MIN_LEN);
-        }
-#endif
-        memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_kcmvp_encrypted_mission_item_encode(system_id, component_id, &msg, &packet1);
-    mavlink_msg_kcmvp_encrypted_mission_item_decode(&msg, &packet2);
-        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
-
-        memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_kcmvp_encrypted_mission_item_pack(system_id, component_id, &msg , packet1.sysid , packet1.compid , packet1.encrypted_mission , packet1.counter_array );
-    mavlink_msg_kcmvp_encrypted_mission_item_decode(&msg, &packet2);
-        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
-
-        memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_kcmvp_encrypted_mission_item_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.sysid , packet1.compid , packet1.encrypted_mission , packet1.counter_array );
-    mavlink_msg_kcmvp_encrypted_mission_item_decode(&msg, &packet2);
-        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
-
-        memset(&packet2, 0, sizeof(packet2));
-        mavlink_msg_to_send_buffer(buffer, &msg);
-        for (i=0; i<mavlink_msg_get_send_buffer_length(&msg); i++) {
-            comm_send_ch(MAVLINK_COMM_0, buffer[i]);
-        }
-    mavlink_msg_kcmvp_encrypted_mission_item_decode(last_msg, &packet2);
-        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
-        
-        memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_kcmvp_encrypted_mission_item_send(MAVLINK_COMM_1 , packet1.sysid , packet1.compid , packet1.encrypted_mission , packet1.counter_array );
-    mavlink_msg_kcmvp_encrypted_mission_item_decode(last_msg, &packet2);
-        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
-
-#ifdef MAVLINK_HAVE_GET_MESSAGE_INFO
-    MAVLINK_ASSERT(mavlink_get_message_info_by_name("KCMVP_ENCRYPTED_MISSION_ITEM") != NULL);
-    MAVLINK_ASSERT(mavlink_get_message_info_by_id(MAVLINK_MSG_ID_KCMVP_ENCRYPTED_MISSION_ITEM) != NULL);
-#endif
-}
-
-static void mavlink_test_kcmvp_encrypted_global_position(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
-{
-#ifdef MAVLINK_STATUS_FLAG_OUT_MAVLINK1
-    mavlink_status_t *status = mavlink_get_channel_status(MAVLINK_COMM_0);
-        if ((status->flags & MAVLINK_STATUS_FLAG_OUT_MAVLINK1) && MAVLINK_MSG_ID_KCMVP_ENCRYPTED_GLOBAL_POSITION >= 256) {
-            return;
-        }
-#endif
-    mavlink_message_t msg;
-        uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
-        uint16_t i;
-    mavlink_kcmvp_encrypted_global_position_t packet_in = {
-        5,72,{ 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166 },{ 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238 }
-    };
-    mavlink_kcmvp_encrypted_global_position_t packet1, packet2;
-        memset(&packet1, 0, sizeof(packet1));
-        packet1.sysid = packet_in.sysid;
-        packet1.compid = packet_in.compid;
-        
-        mav_array_memcpy(packet1.encrypted_position, packet_in.encrypted_position, sizeof(uint8_t)*28);
-        mav_array_memcpy(packet1.counter_array, packet_in.counter_array, sizeof(uint8_t)*16);
-        
-#ifdef MAVLINK_STATUS_FLAG_OUT_MAVLINK1
-        if (status->flags & MAVLINK_STATUS_FLAG_OUT_MAVLINK1) {
-           // cope with extensions
-           memset(MAVLINK_MSG_ID_KCMVP_ENCRYPTED_GLOBAL_POSITION_MIN_LEN + (char *)&packet1, 0, sizeof(packet1)-MAVLINK_MSG_ID_KCMVP_ENCRYPTED_GLOBAL_POSITION_MIN_LEN);
-        }
-#endif
-        memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_kcmvp_encrypted_global_position_encode(system_id, component_id, &msg, &packet1);
-    mavlink_msg_kcmvp_encrypted_global_position_decode(&msg, &packet2);
-        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
-
-        memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_kcmvp_encrypted_global_position_pack(system_id, component_id, &msg , packet1.sysid , packet1.compid , packet1.encrypted_position , packet1.counter_array );
-    mavlink_msg_kcmvp_encrypted_global_position_decode(&msg, &packet2);
-        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
-
-        memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_kcmvp_encrypted_global_position_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.sysid , packet1.compid , packet1.encrypted_position , packet1.counter_array );
-    mavlink_msg_kcmvp_encrypted_global_position_decode(&msg, &packet2);
-        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
-
-        memset(&packet2, 0, sizeof(packet2));
-        mavlink_msg_to_send_buffer(buffer, &msg);
-        for (i=0; i<mavlink_msg_get_send_buffer_length(&msg); i++) {
-            comm_send_ch(MAVLINK_COMM_0, buffer[i]);
-        }
-    mavlink_msg_kcmvp_encrypted_global_position_decode(last_msg, &packet2);
-        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
-        
-        memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_kcmvp_encrypted_global_position_send(MAVLINK_COMM_1 , packet1.sysid , packet1.compid , packet1.encrypted_position , packet1.counter_array );
-    mavlink_msg_kcmvp_encrypted_global_position_decode(last_msg, &packet2);
-        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
-
-#ifdef MAVLINK_HAVE_GET_MESSAGE_INFO
-    MAVLINK_ASSERT(mavlink_get_message_info_by_name("KCMVP_ENCRYPTED_GLOBAL_POSITION") != NULL);
-    MAVLINK_ASSERT(mavlink_get_message_info_by_id(MAVLINK_MSG_ID_KCMVP_ENCRYPTED_GLOBAL_POSITION) != NULL);
-#endif
-}
-
-static void mavlink_test_kcmvp_encrypted_gps_raw(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
-{
-#ifdef MAVLINK_STATUS_FLAG_OUT_MAVLINK1
-    mavlink_status_t *status = mavlink_get_channel_status(MAVLINK_COMM_0);
-        if ((status->flags & MAVLINK_STATUS_FLAG_OUT_MAVLINK1) && MAVLINK_MSG_ID_KCMVP_ENCRYPTED_GPS_RAW >= 256) {
-            return;
-        }
-#endif
-    mavlink_message_t msg;
-        uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
-        uint16_t i;
-    mavlink_kcmvp_encrypted_gps_raw_t packet_in = {
-        5,72,{ 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190 },{ 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54 }
-    };
-    mavlink_kcmvp_encrypted_gps_raw_t packet1, packet2;
-        memset(&packet1, 0, sizeof(packet1));
-        packet1.sysid = packet_in.sysid;
-        packet1.compid = packet_in.compid;
-        
-        mav_array_memcpy(packet1.encrypted_position, packet_in.encrypted_position, sizeof(uint8_t)*52);
-        mav_array_memcpy(packet1.counter_array, packet_in.counter_array, sizeof(uint8_t)*16);
-        
-#ifdef MAVLINK_STATUS_FLAG_OUT_MAVLINK1
-        if (status->flags & MAVLINK_STATUS_FLAG_OUT_MAVLINK1) {
-           // cope with extensions
-           memset(MAVLINK_MSG_ID_KCMVP_ENCRYPTED_GPS_RAW_MIN_LEN + (char *)&packet1, 0, sizeof(packet1)-MAVLINK_MSG_ID_KCMVP_ENCRYPTED_GPS_RAW_MIN_LEN);
-        }
-#endif
-        memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_kcmvp_encrypted_gps_raw_encode(system_id, component_id, &msg, &packet1);
-    mavlink_msg_kcmvp_encrypted_gps_raw_decode(&msg, &packet2);
-        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
-
-        memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_kcmvp_encrypted_gps_raw_pack(system_id, component_id, &msg , packet1.sysid , packet1.compid , packet1.encrypted_position , packet1.counter_array );
-    mavlink_msg_kcmvp_encrypted_gps_raw_decode(&msg, &packet2);
-        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
-
-        memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_kcmvp_encrypted_gps_raw_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.sysid , packet1.compid , packet1.encrypted_position , packet1.counter_array );
-    mavlink_msg_kcmvp_encrypted_gps_raw_decode(&msg, &packet2);
-        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
-
-        memset(&packet2, 0, sizeof(packet2));
-        mavlink_msg_to_send_buffer(buffer, &msg);
-        for (i=0; i<mavlink_msg_get_send_buffer_length(&msg); i++) {
-            comm_send_ch(MAVLINK_COMM_0, buffer[i]);
-        }
-    mavlink_msg_kcmvp_encrypted_gps_raw_decode(last_msg, &packet2);
-        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
-        
-        memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_kcmvp_encrypted_gps_raw_send(MAVLINK_COMM_1 , packet1.sysid , packet1.compid , packet1.encrypted_position , packet1.counter_array );
-    mavlink_msg_kcmvp_encrypted_gps_raw_decode(last_msg, &packet2);
-        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
-
-#ifdef MAVLINK_HAVE_GET_MESSAGE_INFO
-    MAVLINK_ASSERT(mavlink_get_message_info_by_name("KCMVP_ENCRYPTED_GPS_RAW") != NULL);
-    MAVLINK_ASSERT(mavlink_get_message_info_by_id(MAVLINK_MSG_ID_KCMVP_ENCRYPTED_GPS_RAW) != NULL);
-#endif
-}
-
-static void mavlink_test_kcmvp_cmd_ack(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
-{
-#ifdef MAVLINK_STATUS_FLAG_OUT_MAVLINK1
-    mavlink_status_t *status = mavlink_get_channel_status(MAVLINK_COMM_0);
-        if ((status->flags & MAVLINK_STATUS_FLAG_OUT_MAVLINK1) && MAVLINK_MSG_ID_KCMVP_CMD_ACK >= 256) {
-            return;
-        }
-#endif
-    mavlink_message_t msg;
-        uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
-        uint16_t i;
-    mavlink_kcmvp_cmd_ack_t packet_in = {
-        5
-    };
-    mavlink_kcmvp_cmd_ack_t packet1, packet2;
-        memset(&packet1, 0, sizeof(packet1));
-        packet1.ack_result = packet_in.ack_result;
-        
-        
-#ifdef MAVLINK_STATUS_FLAG_OUT_MAVLINK1
-        if (status->flags & MAVLINK_STATUS_FLAG_OUT_MAVLINK1) {
-           // cope with extensions
-           memset(MAVLINK_MSG_ID_KCMVP_CMD_ACK_MIN_LEN + (char *)&packet1, 0, sizeof(packet1)-MAVLINK_MSG_ID_KCMVP_CMD_ACK_MIN_LEN);
-        }
-#endif
-        memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_kcmvp_cmd_ack_encode(system_id, component_id, &msg, &packet1);
-    mavlink_msg_kcmvp_cmd_ack_decode(&msg, &packet2);
-        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
-
-        memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_kcmvp_cmd_ack_pack(system_id, component_id, &msg , packet1.ack_result );
-    mavlink_msg_kcmvp_cmd_ack_decode(&msg, &packet2);
-        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
-
-        memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_kcmvp_cmd_ack_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.ack_result );
-    mavlink_msg_kcmvp_cmd_ack_decode(&msg, &packet2);
-        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
-
-        memset(&packet2, 0, sizeof(packet2));
-        mavlink_msg_to_send_buffer(buffer, &msg);
-        for (i=0; i<mavlink_msg_get_send_buffer_length(&msg); i++) {
-            comm_send_ch(MAVLINK_COMM_0, buffer[i]);
-        }
-    mavlink_msg_kcmvp_cmd_ack_decode(last_msg, &packet2);
-        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
-        
-        memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_kcmvp_cmd_ack_send(MAVLINK_COMM_1 , packet1.ack_result );
-    mavlink_msg_kcmvp_cmd_ack_decode(last_msg, &packet2);
-        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
-
-#ifdef MAVLINK_HAVE_GET_MESSAGE_INFO
-    MAVLINK_ASSERT(mavlink_get_message_info_by_name("KCMVP_CMD_ACK") != NULL);
-    MAVLINK_ASSERT(mavlink_get_message_info_by_id(MAVLINK_MSG_ID_KCMVP_CMD_ACK) != NULL);
 #endif
 }
 
@@ -15079,12 +14764,6 @@ static void mavlink_test_common(uint8_t system_id, uint8_t component_id, mavlink
     mavlink_test_mag_cal_report(system_id, component_id, last_msg);
     mavlink_test_efi_status(system_id, component_id, last_msg);
     mavlink_test_ptp_timesync(system_id, component_id, last_msg);
-    mavlink_test_kcmvp_set_encrypt(system_id, component_id, last_msg);
-    mavlink_test_kcmvp_encrypt_mode_on_off(system_id, component_id, last_msg);
-    mavlink_test_kcmvp_encrypted_mission_item(system_id, component_id, last_msg);
-    mavlink_test_kcmvp_encrypted_global_position(system_id, component_id, last_msg);
-    mavlink_test_kcmvp_encrypted_gps_raw(system_id, component_id, last_msg);
-    mavlink_test_kcmvp_cmd_ack(system_id, component_id, last_msg);
     mavlink_test_estimator_status(system_id, component_id, last_msg);
     mavlink_test_wind_cov(system_id, component_id, last_msg);
     mavlink_test_gps_input(system_id, component_id, last_msg);

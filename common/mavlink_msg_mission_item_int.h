@@ -20,23 +20,28 @@ typedef struct __mavlink_mission_item_int_t {
  uint8_t current; /*<  false:0, true:1*/
  uint8_t autocontinue; /*<  Autocontinue to next waypoint. 0: false, 1: true. Set false to pause mission after the item completes.*/
  uint8_t mission_type; /*<  Mission type.*/
+ uint8_t kcmvp_alg; /*<  KCMVP algorithm.*/
+ uint8_t kcmvp_mode; /*<  KCMVP Mode.*/
+ uint8_t kcmvp_key; /*<  KCMVP Key.*/
+ uint8_t kcmvp_key_index; /*<  KCMVP Key index.*/
+ uint8_t kcmvp_iv[16]; /*<  Initializer Vector*/
 } mavlink_mission_item_int_t;
 
-#define MAVLINK_MSG_ID_MISSION_ITEM_INT_LEN 38
+#define MAVLINK_MSG_ID_MISSION_ITEM_INT_LEN 58
 #define MAVLINK_MSG_ID_MISSION_ITEM_INT_MIN_LEN 37
-#define MAVLINK_MSG_ID_73_LEN 38
+#define MAVLINK_MSG_ID_73_LEN 58
 #define MAVLINK_MSG_ID_73_MIN_LEN 37
 
 #define MAVLINK_MSG_ID_MISSION_ITEM_INT_CRC 38
 #define MAVLINK_MSG_ID_73_CRC 38
 
-
+#define MAVLINK_MSG_MISSION_ITEM_INT_FIELD_KCMVP_IV_LEN 16
 
 #if MAVLINK_COMMAND_24BIT
 #define MAVLINK_MESSAGE_INFO_MISSION_ITEM_INT { \
     73, \
     "MISSION_ITEM_INT", \
-    15, \
+    20, \
     {  { "target_system", NULL, MAVLINK_TYPE_UINT8_T, 0, 32, offsetof(mavlink_mission_item_int_t, target_system) }, \
          { "target_component", NULL, MAVLINK_TYPE_UINT8_T, 0, 33, offsetof(mavlink_mission_item_int_t, target_component) }, \
          { "seq", NULL, MAVLINK_TYPE_UINT16_T, 0, 28, offsetof(mavlink_mission_item_int_t, seq) }, \
@@ -52,12 +57,17 @@ typedef struct __mavlink_mission_item_int_t {
          { "y", NULL, MAVLINK_TYPE_INT32_T, 0, 20, offsetof(mavlink_mission_item_int_t, y) }, \
          { "z", NULL, MAVLINK_TYPE_FLOAT, 0, 24, offsetof(mavlink_mission_item_int_t, z) }, \
          { "mission_type", NULL, MAVLINK_TYPE_UINT8_T, 0, 37, offsetof(mavlink_mission_item_int_t, mission_type) }, \
+         { "kcmvp_alg", NULL, MAVLINK_TYPE_UINT8_T, 0, 38, offsetof(mavlink_mission_item_int_t, kcmvp_alg) }, \
+         { "kcmvp_mode", NULL, MAVLINK_TYPE_UINT8_T, 0, 39, offsetof(mavlink_mission_item_int_t, kcmvp_mode) }, \
+         { "kcmvp_key", NULL, MAVLINK_TYPE_UINT8_T, 0, 40, offsetof(mavlink_mission_item_int_t, kcmvp_key) }, \
+         { "kcmvp_key_index", NULL, MAVLINK_TYPE_UINT8_T, 0, 41, offsetof(mavlink_mission_item_int_t, kcmvp_key_index) }, \
+         { "kcmvp_iv", NULL, MAVLINK_TYPE_UINT8_T, 16, 42, offsetof(mavlink_mission_item_int_t, kcmvp_iv) }, \
          } \
 }
 #else
 #define MAVLINK_MESSAGE_INFO_MISSION_ITEM_INT { \
     "MISSION_ITEM_INT", \
-    15, \
+    20, \
     {  { "target_system", NULL, MAVLINK_TYPE_UINT8_T, 0, 32, offsetof(mavlink_mission_item_int_t, target_system) }, \
          { "target_component", NULL, MAVLINK_TYPE_UINT8_T, 0, 33, offsetof(mavlink_mission_item_int_t, target_component) }, \
          { "seq", NULL, MAVLINK_TYPE_UINT16_T, 0, 28, offsetof(mavlink_mission_item_int_t, seq) }, \
@@ -73,6 +83,11 @@ typedef struct __mavlink_mission_item_int_t {
          { "y", NULL, MAVLINK_TYPE_INT32_T, 0, 20, offsetof(mavlink_mission_item_int_t, y) }, \
          { "z", NULL, MAVLINK_TYPE_FLOAT, 0, 24, offsetof(mavlink_mission_item_int_t, z) }, \
          { "mission_type", NULL, MAVLINK_TYPE_UINT8_T, 0, 37, offsetof(mavlink_mission_item_int_t, mission_type) }, \
+         { "kcmvp_alg", NULL, MAVLINK_TYPE_UINT8_T, 0, 38, offsetof(mavlink_mission_item_int_t, kcmvp_alg) }, \
+         { "kcmvp_mode", NULL, MAVLINK_TYPE_UINT8_T, 0, 39, offsetof(mavlink_mission_item_int_t, kcmvp_mode) }, \
+         { "kcmvp_key", NULL, MAVLINK_TYPE_UINT8_T, 0, 40, offsetof(mavlink_mission_item_int_t, kcmvp_key) }, \
+         { "kcmvp_key_index", NULL, MAVLINK_TYPE_UINT8_T, 0, 41, offsetof(mavlink_mission_item_int_t, kcmvp_key_index) }, \
+         { "kcmvp_iv", NULL, MAVLINK_TYPE_UINT8_T, 16, 42, offsetof(mavlink_mission_item_int_t, kcmvp_iv) }, \
          } \
 }
 #endif
@@ -98,10 +113,15 @@ typedef struct __mavlink_mission_item_int_t {
  * @param y  PARAM6 / y position: local: x position in meters * 1e4, global: longitude in degrees *10^7
  * @param z  PARAM7 / z position: global: altitude in meters (relative or absolute, depending on frame.
  * @param mission_type  Mission type.
+ * @param kcmvp_alg  KCMVP algorithm.
+ * @param kcmvp_mode  KCMVP Mode.
+ * @param kcmvp_key  KCMVP Key.
+ * @param kcmvp_key_index  KCMVP Key index.
+ * @param kcmvp_iv  Initializer Vector
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_mission_item_int_pack(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg,
-                               uint8_t target_system, uint8_t target_component, uint16_t seq, uint8_t frame, uint16_t command, uint8_t current, uint8_t autocontinue, float param1, float param2, float param3, float param4, int32_t x, int32_t y, float z, uint8_t mission_type)
+                               uint8_t target_system, uint8_t target_component, uint16_t seq, uint8_t frame, uint16_t command, uint8_t current, uint8_t autocontinue, float param1, float param2, float param3, float param4, int32_t x, int32_t y, float z, uint8_t mission_type, uint8_t kcmvp_alg, uint8_t kcmvp_mode, uint8_t kcmvp_key, uint8_t kcmvp_key_index, const uint8_t *kcmvp_iv)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
     char buf[MAVLINK_MSG_ID_MISSION_ITEM_INT_LEN];
@@ -120,7 +140,11 @@ static inline uint16_t mavlink_msg_mission_item_int_pack(uint8_t system_id, uint
     _mav_put_uint8_t(buf, 35, current);
     _mav_put_uint8_t(buf, 36, autocontinue);
     _mav_put_uint8_t(buf, 37, mission_type);
-
+    _mav_put_uint8_t(buf, 38, kcmvp_alg);
+    _mav_put_uint8_t(buf, 39, kcmvp_mode);
+    _mav_put_uint8_t(buf, 40, kcmvp_key);
+    _mav_put_uint8_t(buf, 41, kcmvp_key_index);
+    _mav_put_uint8_t_array(buf, 42, kcmvp_iv, 16);
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_MISSION_ITEM_INT_LEN);
 #else
     mavlink_mission_item_int_t packet;
@@ -139,7 +163,11 @@ static inline uint16_t mavlink_msg_mission_item_int_pack(uint8_t system_id, uint
     packet.current = current;
     packet.autocontinue = autocontinue;
     packet.mission_type = mission_type;
-
+    packet.kcmvp_alg = kcmvp_alg;
+    packet.kcmvp_mode = kcmvp_mode;
+    packet.kcmvp_key = kcmvp_key;
+    packet.kcmvp_key_index = kcmvp_key_index;
+    mav_array_memcpy(packet.kcmvp_iv, kcmvp_iv, sizeof(uint8_t)*16);
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, MAVLINK_MSG_ID_MISSION_ITEM_INT_LEN);
 #endif
 
@@ -168,11 +196,16 @@ static inline uint16_t mavlink_msg_mission_item_int_pack(uint8_t system_id, uint
  * @param y  PARAM6 / y position: local: x position in meters * 1e4, global: longitude in degrees *10^7
  * @param z  PARAM7 / z position: global: altitude in meters (relative or absolute, depending on frame.
  * @param mission_type  Mission type.
+ * @param kcmvp_alg  KCMVP algorithm.
+ * @param kcmvp_mode  KCMVP Mode.
+ * @param kcmvp_key  KCMVP Key.
+ * @param kcmvp_key_index  KCMVP Key index.
+ * @param kcmvp_iv  Initializer Vector
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_mission_item_int_pack_chan(uint8_t system_id, uint8_t component_id, uint8_t chan,
                                mavlink_message_t* msg,
-                                   uint8_t target_system,uint8_t target_component,uint16_t seq,uint8_t frame,uint16_t command,uint8_t current,uint8_t autocontinue,float param1,float param2,float param3,float param4,int32_t x,int32_t y,float z,uint8_t mission_type)
+                                   uint8_t target_system,uint8_t target_component,uint16_t seq,uint8_t frame,uint16_t command,uint8_t current,uint8_t autocontinue,float param1,float param2,float param3,float param4,int32_t x,int32_t y,float z,uint8_t mission_type,uint8_t kcmvp_alg,uint8_t kcmvp_mode,uint8_t kcmvp_key,uint8_t kcmvp_key_index,const uint8_t *kcmvp_iv)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
     char buf[MAVLINK_MSG_ID_MISSION_ITEM_INT_LEN];
@@ -191,7 +224,11 @@ static inline uint16_t mavlink_msg_mission_item_int_pack_chan(uint8_t system_id,
     _mav_put_uint8_t(buf, 35, current);
     _mav_put_uint8_t(buf, 36, autocontinue);
     _mav_put_uint8_t(buf, 37, mission_type);
-
+    _mav_put_uint8_t(buf, 38, kcmvp_alg);
+    _mav_put_uint8_t(buf, 39, kcmvp_mode);
+    _mav_put_uint8_t(buf, 40, kcmvp_key);
+    _mav_put_uint8_t(buf, 41, kcmvp_key_index);
+    _mav_put_uint8_t_array(buf, 42, kcmvp_iv, 16);
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_MISSION_ITEM_INT_LEN);
 #else
     mavlink_mission_item_int_t packet;
@@ -210,7 +247,11 @@ static inline uint16_t mavlink_msg_mission_item_int_pack_chan(uint8_t system_id,
     packet.current = current;
     packet.autocontinue = autocontinue;
     packet.mission_type = mission_type;
-
+    packet.kcmvp_alg = kcmvp_alg;
+    packet.kcmvp_mode = kcmvp_mode;
+    packet.kcmvp_key = kcmvp_key;
+    packet.kcmvp_key_index = kcmvp_key_index;
+    mav_array_memcpy(packet.kcmvp_iv, kcmvp_iv, sizeof(uint8_t)*16);
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, MAVLINK_MSG_ID_MISSION_ITEM_INT_LEN);
 #endif
 
@@ -228,7 +269,7 @@ static inline uint16_t mavlink_msg_mission_item_int_pack_chan(uint8_t system_id,
  */
 static inline uint16_t mavlink_msg_mission_item_int_encode(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg, const mavlink_mission_item_int_t* mission_item_int)
 {
-    return mavlink_msg_mission_item_int_pack(system_id, component_id, msg, mission_item_int->target_system, mission_item_int->target_component, mission_item_int->seq, mission_item_int->frame, mission_item_int->command, mission_item_int->current, mission_item_int->autocontinue, mission_item_int->param1, mission_item_int->param2, mission_item_int->param3, mission_item_int->param4, mission_item_int->x, mission_item_int->y, mission_item_int->z, mission_item_int->mission_type);
+    return mavlink_msg_mission_item_int_pack(system_id, component_id, msg, mission_item_int->target_system, mission_item_int->target_component, mission_item_int->seq, mission_item_int->frame, mission_item_int->command, mission_item_int->current, mission_item_int->autocontinue, mission_item_int->param1, mission_item_int->param2, mission_item_int->param3, mission_item_int->param4, mission_item_int->x, mission_item_int->y, mission_item_int->z, mission_item_int->mission_type, mission_item_int->kcmvp_alg, mission_item_int->kcmvp_mode, mission_item_int->kcmvp_key, mission_item_int->kcmvp_key_index, mission_item_int->kcmvp_iv);
 }
 
 /**
@@ -242,7 +283,7 @@ static inline uint16_t mavlink_msg_mission_item_int_encode(uint8_t system_id, ui
  */
 static inline uint16_t mavlink_msg_mission_item_int_encode_chan(uint8_t system_id, uint8_t component_id, uint8_t chan, mavlink_message_t* msg, const mavlink_mission_item_int_t* mission_item_int)
 {
-    return mavlink_msg_mission_item_int_pack_chan(system_id, component_id, chan, msg, mission_item_int->target_system, mission_item_int->target_component, mission_item_int->seq, mission_item_int->frame, mission_item_int->command, mission_item_int->current, mission_item_int->autocontinue, mission_item_int->param1, mission_item_int->param2, mission_item_int->param3, mission_item_int->param4, mission_item_int->x, mission_item_int->y, mission_item_int->z, mission_item_int->mission_type);
+    return mavlink_msg_mission_item_int_pack_chan(system_id, component_id, chan, msg, mission_item_int->target_system, mission_item_int->target_component, mission_item_int->seq, mission_item_int->frame, mission_item_int->command, mission_item_int->current, mission_item_int->autocontinue, mission_item_int->param1, mission_item_int->param2, mission_item_int->param3, mission_item_int->param4, mission_item_int->x, mission_item_int->y, mission_item_int->z, mission_item_int->mission_type, mission_item_int->kcmvp_alg, mission_item_int->kcmvp_mode, mission_item_int->kcmvp_key, mission_item_int->kcmvp_key_index, mission_item_int->kcmvp_iv);
 }
 
 /**
@@ -264,10 +305,15 @@ static inline uint16_t mavlink_msg_mission_item_int_encode_chan(uint8_t system_i
  * @param y  PARAM6 / y position: local: x position in meters * 1e4, global: longitude in degrees *10^7
  * @param z  PARAM7 / z position: global: altitude in meters (relative or absolute, depending on frame.
  * @param mission_type  Mission type.
+ * @param kcmvp_alg  KCMVP algorithm.
+ * @param kcmvp_mode  KCMVP Mode.
+ * @param kcmvp_key  KCMVP Key.
+ * @param kcmvp_key_index  KCMVP Key index.
+ * @param kcmvp_iv  Initializer Vector
  */
 #ifdef MAVLINK_USE_CONVENIENCE_FUNCTIONS
 
-static inline void mavlink_msg_mission_item_int_send(mavlink_channel_t chan, uint8_t target_system, uint8_t target_component, uint16_t seq, uint8_t frame, uint16_t command, uint8_t current, uint8_t autocontinue, float param1, float param2, float param3, float param4, int32_t x, int32_t y, float z, uint8_t mission_type)
+static inline void mavlink_msg_mission_item_int_send(mavlink_channel_t chan, uint8_t target_system, uint8_t target_component, uint16_t seq, uint8_t frame, uint16_t command, uint8_t current, uint8_t autocontinue, float param1, float param2, float param3, float param4, int32_t x, int32_t y, float z, uint8_t mission_type, uint8_t kcmvp_alg, uint8_t kcmvp_mode, uint8_t kcmvp_key, uint8_t kcmvp_key_index, const uint8_t *kcmvp_iv)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
     char buf[MAVLINK_MSG_ID_MISSION_ITEM_INT_LEN];
@@ -286,7 +332,11 @@ static inline void mavlink_msg_mission_item_int_send(mavlink_channel_t chan, uin
     _mav_put_uint8_t(buf, 35, current);
     _mav_put_uint8_t(buf, 36, autocontinue);
     _mav_put_uint8_t(buf, 37, mission_type);
-
+    _mav_put_uint8_t(buf, 38, kcmvp_alg);
+    _mav_put_uint8_t(buf, 39, kcmvp_mode);
+    _mav_put_uint8_t(buf, 40, kcmvp_key);
+    _mav_put_uint8_t(buf, 41, kcmvp_key_index);
+    _mav_put_uint8_t_array(buf, 42, kcmvp_iv, 16);
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_MISSION_ITEM_INT, buf, MAVLINK_MSG_ID_MISSION_ITEM_INT_MIN_LEN, MAVLINK_MSG_ID_MISSION_ITEM_INT_LEN, MAVLINK_MSG_ID_MISSION_ITEM_INT_CRC);
 #else
     mavlink_mission_item_int_t packet;
@@ -305,7 +355,11 @@ static inline void mavlink_msg_mission_item_int_send(mavlink_channel_t chan, uin
     packet.current = current;
     packet.autocontinue = autocontinue;
     packet.mission_type = mission_type;
-
+    packet.kcmvp_alg = kcmvp_alg;
+    packet.kcmvp_mode = kcmvp_mode;
+    packet.kcmvp_key = kcmvp_key;
+    packet.kcmvp_key_index = kcmvp_key_index;
+    mav_array_memcpy(packet.kcmvp_iv, kcmvp_iv, sizeof(uint8_t)*16);
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_MISSION_ITEM_INT, (const char *)&packet, MAVLINK_MSG_ID_MISSION_ITEM_INT_MIN_LEN, MAVLINK_MSG_ID_MISSION_ITEM_INT_LEN, MAVLINK_MSG_ID_MISSION_ITEM_INT_CRC);
 #endif
 }
@@ -318,7 +372,7 @@ static inline void mavlink_msg_mission_item_int_send(mavlink_channel_t chan, uin
 static inline void mavlink_msg_mission_item_int_send_struct(mavlink_channel_t chan, const mavlink_mission_item_int_t* mission_item_int)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
-    mavlink_msg_mission_item_int_send(chan, mission_item_int->target_system, mission_item_int->target_component, mission_item_int->seq, mission_item_int->frame, mission_item_int->command, mission_item_int->current, mission_item_int->autocontinue, mission_item_int->param1, mission_item_int->param2, mission_item_int->param3, mission_item_int->param4, mission_item_int->x, mission_item_int->y, mission_item_int->z, mission_item_int->mission_type);
+    mavlink_msg_mission_item_int_send(chan, mission_item_int->target_system, mission_item_int->target_component, mission_item_int->seq, mission_item_int->frame, mission_item_int->command, mission_item_int->current, mission_item_int->autocontinue, mission_item_int->param1, mission_item_int->param2, mission_item_int->param3, mission_item_int->param4, mission_item_int->x, mission_item_int->y, mission_item_int->z, mission_item_int->mission_type, mission_item_int->kcmvp_alg, mission_item_int->kcmvp_mode, mission_item_int->kcmvp_key, mission_item_int->kcmvp_key_index, mission_item_int->kcmvp_iv);
 #else
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_MISSION_ITEM_INT, (const char *)mission_item_int, MAVLINK_MSG_ID_MISSION_ITEM_INT_MIN_LEN, MAVLINK_MSG_ID_MISSION_ITEM_INT_LEN, MAVLINK_MSG_ID_MISSION_ITEM_INT_CRC);
 #endif
@@ -332,7 +386,7 @@ static inline void mavlink_msg_mission_item_int_send_struct(mavlink_channel_t ch
   is usually the receive buffer for the channel, and allows a reply to an
   incoming message with minimum stack space usage.
  */
-static inline void mavlink_msg_mission_item_int_send_buf(mavlink_message_t *msgbuf, mavlink_channel_t chan,  uint8_t target_system, uint8_t target_component, uint16_t seq, uint8_t frame, uint16_t command, uint8_t current, uint8_t autocontinue, float param1, float param2, float param3, float param4, int32_t x, int32_t y, float z, uint8_t mission_type)
+static inline void mavlink_msg_mission_item_int_send_buf(mavlink_message_t *msgbuf, mavlink_channel_t chan,  uint8_t target_system, uint8_t target_component, uint16_t seq, uint8_t frame, uint16_t command, uint8_t current, uint8_t autocontinue, float param1, float param2, float param3, float param4, int32_t x, int32_t y, float z, uint8_t mission_type, uint8_t kcmvp_alg, uint8_t kcmvp_mode, uint8_t kcmvp_key, uint8_t kcmvp_key_index, const uint8_t *kcmvp_iv)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
     char *buf = (char *)msgbuf;
@@ -351,7 +405,11 @@ static inline void mavlink_msg_mission_item_int_send_buf(mavlink_message_t *msgb
     _mav_put_uint8_t(buf, 35, current);
     _mav_put_uint8_t(buf, 36, autocontinue);
     _mav_put_uint8_t(buf, 37, mission_type);
-
+    _mav_put_uint8_t(buf, 38, kcmvp_alg);
+    _mav_put_uint8_t(buf, 39, kcmvp_mode);
+    _mav_put_uint8_t(buf, 40, kcmvp_key);
+    _mav_put_uint8_t(buf, 41, kcmvp_key_index);
+    _mav_put_uint8_t_array(buf, 42, kcmvp_iv, 16);
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_MISSION_ITEM_INT, buf, MAVLINK_MSG_ID_MISSION_ITEM_INT_MIN_LEN, MAVLINK_MSG_ID_MISSION_ITEM_INT_LEN, MAVLINK_MSG_ID_MISSION_ITEM_INT_CRC);
 #else
     mavlink_mission_item_int_t *packet = (mavlink_mission_item_int_t *)msgbuf;
@@ -370,7 +428,11 @@ static inline void mavlink_msg_mission_item_int_send_buf(mavlink_message_t *msgb
     packet->current = current;
     packet->autocontinue = autocontinue;
     packet->mission_type = mission_type;
-
+    packet->kcmvp_alg = kcmvp_alg;
+    packet->kcmvp_mode = kcmvp_mode;
+    packet->kcmvp_key = kcmvp_key;
+    packet->kcmvp_key_index = kcmvp_key_index;
+    mav_array_memcpy(packet->kcmvp_iv, kcmvp_iv, sizeof(uint8_t)*16);
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_MISSION_ITEM_INT, (const char *)packet, MAVLINK_MSG_ID_MISSION_ITEM_INT_MIN_LEN, MAVLINK_MSG_ID_MISSION_ITEM_INT_LEN, MAVLINK_MSG_ID_MISSION_ITEM_INT_CRC);
 #endif
 }
@@ -532,6 +594,56 @@ static inline uint8_t mavlink_msg_mission_item_int_get_mission_type(const mavlin
 }
 
 /**
+ * @brief Get field kcmvp_alg from mission_item_int message
+ *
+ * @return  KCMVP algorithm.
+ */
+static inline uint8_t mavlink_msg_mission_item_int_get_kcmvp_alg(const mavlink_message_t* msg)
+{
+    return _MAV_RETURN_uint8_t(msg,  38);
+}
+
+/**
+ * @brief Get field kcmvp_mode from mission_item_int message
+ *
+ * @return  KCMVP Mode.
+ */
+static inline uint8_t mavlink_msg_mission_item_int_get_kcmvp_mode(const mavlink_message_t* msg)
+{
+    return _MAV_RETURN_uint8_t(msg,  39);
+}
+
+/**
+ * @brief Get field kcmvp_key from mission_item_int message
+ *
+ * @return  KCMVP Key.
+ */
+static inline uint8_t mavlink_msg_mission_item_int_get_kcmvp_key(const mavlink_message_t* msg)
+{
+    return _MAV_RETURN_uint8_t(msg,  40);
+}
+
+/**
+ * @brief Get field kcmvp_key_index from mission_item_int message
+ *
+ * @return  KCMVP Key index.
+ */
+static inline uint8_t mavlink_msg_mission_item_int_get_kcmvp_key_index(const mavlink_message_t* msg)
+{
+    return _MAV_RETURN_uint8_t(msg,  41);
+}
+
+/**
+ * @brief Get field kcmvp_iv from mission_item_int message
+ *
+ * @return  Initializer Vector
+ */
+static inline uint16_t mavlink_msg_mission_item_int_get_kcmvp_iv(const mavlink_message_t* msg, uint8_t *kcmvp_iv)
+{
+    return _MAV_RETURN_uint8_t_array(msg, kcmvp_iv, 16,  42);
+}
+
+/**
  * @brief Decode a mission_item_int message into a struct
  *
  * @param msg The message to decode
@@ -555,6 +667,11 @@ static inline void mavlink_msg_mission_item_int_decode(const mavlink_message_t* 
     mission_item_int->current = mavlink_msg_mission_item_int_get_current(msg);
     mission_item_int->autocontinue = mavlink_msg_mission_item_int_get_autocontinue(msg);
     mission_item_int->mission_type = mavlink_msg_mission_item_int_get_mission_type(msg);
+    mission_item_int->kcmvp_alg = mavlink_msg_mission_item_int_get_kcmvp_alg(msg);
+    mission_item_int->kcmvp_mode = mavlink_msg_mission_item_int_get_kcmvp_mode(msg);
+    mission_item_int->kcmvp_key = mavlink_msg_mission_item_int_get_kcmvp_key(msg);
+    mission_item_int->kcmvp_key_index = mavlink_msg_mission_item_int_get_kcmvp_key_index(msg);
+    mavlink_msg_mission_item_int_get_kcmvp_iv(msg, mission_item_int->kcmvp_iv);
 #else
         uint8_t len = msg->len < MAVLINK_MSG_ID_MISSION_ITEM_INT_LEN? msg->len : MAVLINK_MSG_ID_MISSION_ITEM_INT_LEN;
         memset(mission_item_int, 0, MAVLINK_MSG_ID_MISSION_ITEM_INT_LEN);
